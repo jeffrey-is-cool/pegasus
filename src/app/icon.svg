@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 110">
+  <defs>
+    <clipPath id="shield"><path d="M0,0 L100,0 L100,60 L50,110 L0,60 Z"/></clipPath>
+  </defs>
+  <g clip-path="url(#shield)">
+    <rect x="0" y="0" width="14.3" height="110" fill="#8AB4E3"/>
+    <rect x="14.3" y="0" width="14.3" height="110" fill="#F0AADB"/>
+    <rect x="28.6" y="0" width="14.3" height="110" fill="#8AB4E3"/>
+    <rect x="42.9" y="0" width="14.3" height="110" fill="#F0AADB"/>
+    <rect x="57.1" y="0" width="14.3" height="110" fill="#8AB4E3"/>
+    <rect x="71.4" y="0" width="14.3" height="110" fill="#F0AADB"/>
+    <rect x="85.7" y="0" width="14.3" height="110" fill="#8AB4E3"/>
+  </g>
+</svg>
