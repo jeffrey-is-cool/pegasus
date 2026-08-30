@@ -1,21 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter_Tight, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import "@/styles/tokens.css";
 import "@/styles/primitives.css";
 import "./globals.css";
 
-const inter = Inter({
+const interTight = Inter_Tight({
   subsets: ["latin"],
   style: ["normal", "italic"],
-  variable: "--font-inter",
+  variable: "--font-inter-tight",
   display: "swap",
 });
 
-const playfair = Playfair_Display({
+const emphasisDisplay = Playfair_Display({
   subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-playfair",
+  style: ["italic"],
+  variable: "--font-emphasis-display",
   display: "swap",
 });
 
@@ -52,12 +52,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#fafaf7",
+  themeColor: "#141c26",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${interTight.variable} ${emphasisDisplay.variable}`}>
       <body>
         {children}
         <Script

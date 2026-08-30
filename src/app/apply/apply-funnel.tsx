@@ -4,7 +4,10 @@ import Image from "next/image";
 import posthog from "posthog-js";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BrandMark } from "@/components/brand-mark";
+import { Button, ButtonLink } from "@/components/ui/primitives";
 import {
+  APPLY_FUNNEL_ANSWER_OPTIONS,
+  APPLY_FUNNEL_QUESTION_LABELS,
   APPLY_FUNNEL_TRACKING,
   applyScreenProperties,
   type ApplyScreen,
@@ -22,16 +25,6 @@ type Option = {
   detail?: string;
 };
 
-type InfoSlide = {
-  id: string;
-  imageAlt: string;
-  imageSrc: string;
-  title: string;
-  body: string;
-  sourceLabel: string;
-  sourceUrl: string;
-};
-
 type SuggestedAnswer = {
   label: string;
   logoAlt: string;
@@ -40,70 +33,57 @@ type SuggestedAnswer = {
 };
 
 type Question = {
-  advisorMessage: string;
   key: string;
   columns: 1 | 2;
   maxSelections?: number;
   multiSelect?: boolean;
   searchableAnswers?: readonly string[];
-  suggestedAnswers?: SuggestedAnswer[];
+  suggestedAnswers?: readonly SuggestedAnswer[];
   textInputPlaceholder?: string;
   prompt: string;
   supporting: string;
-  options: Option[];
-  infoSlidesByAnswer?: Record<string, InfoSlide>;
+  options: readonly Option[];
 };
 
-const DREAM_SCHOOL_SUGGESTIONS = [
-  {
-    label: "Harvard University",
+const DREAM_SCHOOL_SUGGESTION_ASSETS = {
+  "Harvard University": {
     logoAlt: "Harvard University logo",
     logoSrc: "/logos/harvard_mark.png",
-    value: "Harvard University",
   },
-  {
-    label: "Stanford University",
+  "Stanford University": {
     logoAlt: "Stanford University logo",
     logoSrc: "/logos/stanford_cropped.png",
-    value: "Stanford University",
   },
-  {
-    label: "University of Pennsylvania",
+  "University of Pennsylvania": {
     logoAlt: "University of Pennsylvania logo",
     logoSrc: "/logos/penn_shield.png",
-    value: "University of Pennsylvania",
   },
-  {
-    label: "Brown University",
+  "Brown University": {
     logoAlt: "Brown University logo",
     logoSrc: "/logos/brown_shield.png",
-    value: "Brown University",
   },
-  {
-    label: "Dartmouth College",
+  "Dartmouth College": {
     logoAlt: "Dartmouth College logo",
     logoSrc: "/logos/dartmouth_coa.png",
-    value: "Dartmouth College",
   },
-  {
-    label: "New York University",
+  "New York University": {
     logoAlt: "New York University logo",
     logoSrc: "/logos/nyu_torch.png",
-    value: "New York University",
   },
-  {
-    label: "University of Michigan",
+  "University of Michigan": {
     logoAlt: "University of Michigan logo",
     logoSrc: "/logos/michigan_seal.png",
-    value: "University of Michigan",
   },
-  {
-    label: "Cooper Union",
+  "Cooper Union": {
     logoAlt: "Cooper Union logo",
     logoSrc: "/logos/cooper.png",
-    value: "Cooper Union",
   },
-] satisfies SuggestedAnswer[];
+} as const;
+
+const DREAM_SCHOOL_SUGGESTIONS = APPLY_FUNNEL_ANSWER_OPTIONS.dream_school.map((answer) => ({
+  ...answer,
+  ...DREAM_SCHOOL_SUGGESTION_ASSETS[answer.value],
+})) satisfies SuggestedAnswer[];
 
 const APPLICATION_LEVERS = [
   {
@@ -123,171 +103,30 @@ const APPLICATION_LEVERS = [
   },
 ] as const;
 
-const STUDENT_STAGE_INFO_SLIDES: Record<string, InfoSlide> = {
-  younger_than_high_school: {
-    id: "curriculum_strength",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "67% of students who completed Algebra I before ninth grade enrolled in a four-year college.",
-    body: "That compared with 43% for students who completed it in ninth grade and 23% for those who completed it in eleventh or twelfth grade. Early course sequencing can preserve more advanced options later.",
-    sourceLabel: "U.S. Department of Education, NCES — Algebra I Coursetaking",
-    sourceUrl: "https://nces.ed.gov/pubs2019/2019154/index.asp",
-  },
-  freshman: {
-    id: "college_prep_grades",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "Freshman GPA was nearly twice as predictive of graduation as test scores.",
-    body: "Ninth-grade performance also predicted college enrollment and persistence, making freshman year a powerful opportunity to establish the right trajectory.",
-    sourceLabel: "UChicago Consortium — The Predictive Power of Ninth-Grade GPA",
-    sourceUrl:
-      "https://consortium.uchicago.edu/sites/default/files/2018-10/Predictive%20Power%20of%20Ninth-Grade-Sept%202017-Consortium.pdf",
-  },
-  sophomore: {
-    id: "placeholder_stat",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "[Insert a relevant admissions statistic]",
-    body: "Add a short, sourced statistic here that explains why this stage matters for the student’s admissions path.",
-    sourceLabel: "Placeholder — add source before launch",
-    sourceUrl: "#",
-  },
-  junior: {
-    id: "essay_weight",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "Students who retested improved their ACT Superscore by 2.4 points on average.",
-    body: "Junior year leaves time to establish a testing baseline, address weak areas, and improve before applications and early deadlines arrive.",
-    sourceLabel: "ACT — Graduating Class Database (2024)",
-    sourceUrl:
-      "https://www.act.org/content/act/en/research/services-and-resources/data-and-visualization/grad-class-database-2024.html",
-  },
-  senior: {
-    id: "early_applications",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "Nearly six in ten Common App applicants applied early.",
-    body: "With 58% submitting at least one Early Action or Early Decision application, senior-year strategy needs to be ready well before regular deadlines.",
-    sourceLabel: "Common App — Early Admission Deadlines (2022–23)",
-    sourceUrl:
-      "https://www.commonapp.org/about/reports-and-insights/early-admission-deadlines-student-trends-and-implications/",
-  },
-  transfer: {
-    id: "transfer_path",
-    imageAlt: "A student preparing for school",
-    imageSrc: "/apply/high-school-student.png",
-    title: "66% earned a bachelor’s—but just 14% finished within two years of transferring.",
-    body: "The transfer route can work, but credit alignment, school selection, and timing make an enormous difference in how efficiently students reach the degree.",
-    sourceLabel: "National Student Clearinghouse — Tracking Transfer (2025)",
-    sourceUrl:
-      "https://www.studentclearinghouse.org/nscblog/tracking-transfer-report-reveals-student-pathway-insights/",
-  },
-};
-
 const QUESTIONS: Question[] = [
   {
-    advisorMessage: "The earlier I understand where your child is today, the more intentional we can be about what comes next.",
     key: "student_stage",
     columns: 2,
-    prompt: "Where is your child in their education?",
+    prompt: APPLY_FUNNEL_QUESTION_LABELS.student_stage,
     supporting: "Choose the stage that best matches where they are today.",
-    infoSlidesByAnswer: STUDENT_STAGE_INFO_SLIDES,
-    options: [
-      {
-        value: "younger_than_high_school",
-        label: "Before 9th grade",
-      },
-      {
-        value: "freshman",
-        label: "9th grade",
-      },
-      {
-        value: "sophomore",
-        label: "10th grade",
-      },
-      {
-        value: "junior",
-        label: "11th grade",
-      },
-      {
-        value: "senior",
-        label: "12th grade",
-      },
-      {
-        value: "transfer",
-        label: "Transfer student",
-      },
-      {
-        value: "graduate_school",
-        label: "Graduate school",
-      },
-    ],
+    options: APPLY_FUNNEL_ANSWER_OPTIONS.student_stage,
   },
   {
-    advisorMessage: "There is no single definition of success. I want to understand what matters most to your family.",
     key: "dream_outcome",
     columns: 1,
-    prompt: "What is the dream outcome for admissions?",
+    prompt: APPLY_FUNNEL_QUESTION_LABELS.dream_outcome,
     supporting: "Choose the outcome that matters most to your family.",
-    options: [
-      {
-        value: "best_fit",
-        label: "My child gets into the school that is their best fit, regardless of prestige",
-      },
-      {
-        value: "highest_roi",
-        label: "They get into a school with the highest return on investment",
-      },
-      {
-        value: "feeling_stuck",
-        label: "I’m not sure I’m making the right decision and want a third-party perspective",
-      },
-      {
-        value: "strong_options",
-        label: "They have strong options and a clear path forward",
-      },
-    ],
+    options: APPLY_FUNNEL_ANSWER_OPTIONS.dream_outcome,
   },
   {
-    advisorMessage: "Most families do not need more information. They need clarity on where support will make the biggest difference.",
     key: "priority",
     columns: 2,
     multiSelect: true,
-    prompt: "What are the biggest pain points you feel right now in the admissions process?",
+    prompt: APPLY_FUNNEL_QUESTION_LABELS.priority,
     supporting: "Select all that apply.",
-    options: [
-      {
-        value: "strategy",
-        label: "Strategy and positioning",
-        detail: "School selection, differentiation, and a plan that compounds over time.",
-      },
-      {
-        value: "storytelling",
-        label: "Essays and storytelling",
-        detail: "Turning the student’s experiences into an authentic, memorable narrative.",
-      },
-      {
-        value: "performance",
-        label: "Confidence and execution",
-        detail: "Accountability, communication, mindset, and performing under pressure.",
-      },
-      {
-        value: "complete_management",
-        label: "Complete process management",
-        detail: "One accountable private team coordinating every important detail.",
-      },
-      {
-        value: "too_busy",
-        label: "I’m too busy to give this process the attention I want to give it",
-      },
-      {
-        value: "student_not_listening",
-        label: "My kid doesn’t listen to me",
-      },
-    ],
+    options: APPLY_FUNNEL_ANSWER_OPTIONS.priority,
   },
   {
-    advisorMessage: "Do not overthink this. Choose the schools that feel most exciting right now, and we can refine the list later.",
     key: "dream_school",
     columns: 1,
     maxSelections: 3,
@@ -295,34 +134,16 @@ const QUESTIONS: Question[] = [
     searchableAnswers: SCHOOL_SEARCH_OPTIONS,
     suggestedAnswers: DREAM_SCHOOL_SUGGESTIONS,
     textInputPlaceholder: "Search or type a school",
-    prompt: "What are your child’s top three schools?",
+    prompt: APPLY_FUNNEL_QUESTION_LABELS.dream_school,
     supporting: "Search for a school or choose from the options below.",
     options: [],
   },
   {
-    advisorMessage: "A realistic range helps us balance ambition, fit, and the return your family expects from this investment.",
     key: "college_investment",
     columns: 2,
-    prompt: "How much are you looking to invest in a college degree?",
+    prompt: APPLY_FUNNEL_QUESTION_LABELS.college_investment,
     supporting: "Consider the total cost of attendance, including tuition, housing, and other expenses.",
-    options: [
-      {
-        value: "under_10k",
-        label: "Less than $10,000",
-      },
-      {
-        value: "10k_to_20k",
-        label: "$10,000–$20,000",
-      },
-      {
-        value: "up_to_50k",
-        label: "Up to $50,000",
-      },
-      {
-        value: "up_to_150k",
-        label: "Up to $150,000",
-      },
-    ],
+    options: APPLY_FUNNEL_ANSWER_OPTIONS.college_investment,
   },
 ];
 
@@ -352,37 +173,11 @@ function formatAcceptanceRate(rate: number | null | undefined) {
   return `${(rate * 100).toFixed(1)}%`;
 }
 
-function FounderPortrait() {
-  return (
-    <div className={styles.cardFounderPhoto}>
-      <Image
-        alt="Jeffrey Zhang, founder of Pegasus Prep Education"
-        height={64}
-        src="/jeffrey.png"
-        width={64}
-      />
-    </div>
-  );
-}
-
-function AdvisorHeader({ message }: { message: string }) {
-  return (
-    <div className={styles.advisorHeader}>
-      <FounderPortrait />
-      <div className={styles.advisorDetails}>
-        <p className={styles.advisorName}>Jeffrey Zhang</p>
-        <blockquote className={styles.advisorProof}>{message}</blockquote>
-      </div>
-    </div>
-  );
-}
-
 export function ApplyFunnel() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [textAnswerDrafts, setTextAnswerDrafts] = useState<Answers>({});
-  const [activeInfoSlide, setActiveInfoSlide] = useState<InfoSlide | null>(null);
   const [showSchoolComparison, setShowSchoolComparison] = useState(false);
   const [showApplicationLevers, setShowApplicationLevers] = useState(false);
   const [preBookingQuestion, setPreBookingQuestion] = useState("");
@@ -443,15 +238,6 @@ export function ApplyFunnel() {
               questionKey: question!.key,
               questionLabel: question!.prompt,
             }
-        : activeInfoSlide
-          ? {
-              id: `info_${question!.key}_${activeInfoSlide.id}`,
-              name: activeInfoSlide.title,
-              type: "info",
-              index: step + 1.5,
-              questionKey: question!.key,
-              questionLabel: question!.prompt,
-            }
         : {
             id: `question_${question!.key}`,
             name: question!.prompt,
@@ -463,7 +249,7 @@ export function ApplyFunnel() {
 
   useEffect(() => {
     if (phase !== "intro") headingRef.current?.focus();
-  }, [activeInfoSlide, phase, showApplicationLevers, showSchoolComparison, step]);
+  }, [phase, showApplicationLevers, showSchoolComparison, step]);
 
   useEffect(() => {
     const startedAt = performance.now();
@@ -534,7 +320,6 @@ export function ApplyFunnel() {
 
   const begin = () => {
     screenExitReasonRef.current = "completed";
-    setActiveInfoSlide(null);
     setShowSchoolComparison(false);
     setShowApplicationLevers(false);
     setPreBookingQuestion("");
@@ -634,28 +419,12 @@ export function ApplyFunnel() {
     });
     screenExitReasonRef.current = "completed";
 
-    const nextInfoSlide = question.infoSlidesByAnswer?.[selected];
     if (question.key === "dream_school") {
       setShowApplicationLevers(false);
       setShowSchoolComparison(true);
       return;
     }
 
-    if (nextInfoSlide) {
-      setActiveInfoSlide(nextInfoSlide);
-      return;
-    }
-
-    advanceFromCurrentQuestion();
-  };
-
-  const continueFromInfoSlide = () => {
-    posthog.capture(
-      APPLY_FUNNEL_TRACKING.events.screenCompleted,
-      applyScreenProperties(trackingScreen),
-    );
-    screenExitReasonRef.current = "completed";
-    setActiveInfoSlide(null);
     advanceFromCurrentQuestion();
   };
 
@@ -715,7 +484,6 @@ export function ApplyFunnel() {
 
   const jumpToStep = (nextStep: number) => {
     screenExitReasonRef.current = "screen_changed";
-    setActiveInfoSlide(null);
     setShowApplicationLevers(false);
     setShowSchoolComparison(false);
     setPreBookingQuestion("");
@@ -728,8 +496,8 @@ export function ApplyFunnel() {
       <span className={styles.devLabel}>Dev</span>
       {QUESTIONS.map((item, index) => (
         <button
-          aria-current={phase === "questions" && !activeInfoSlide && !showSchoolComparison && step === index ? "step" : undefined}
-          className={`${styles.devStep} ${phase === "questions" && !activeInfoSlide && !showSchoolComparison && step === index ? styles.devStepActive : ""}`}
+          aria-current={phase === "questions" && !showSchoolComparison && step === index ? "step" : undefined}
+          className={`${styles.devStep} ${phase === "questions" && !showSchoolComparison && step === index ? styles.devStepActive : ""}`}
           key={item.key}
           onClick={() => jumpToStep(index)}
           title={item.prompt}
@@ -747,18 +515,18 @@ export function ApplyFunnel() {
         {devNavigator}
         {phase === "intro" && (
           <section className={`${styles.card} ${styles.introCard}`} aria-labelledby="apply-intro-title">
-            <AdvisorHeader message="I’ll help you turn uncertainty into a clear, practical admissions plan." />
-            <h1 className={styles.displayTitle} id="apply-intro-title">
-              Find the right path to your child&apos;s best-fit college.
+            <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-intro-title">
+              Find the right path to your child&apos;s{" "}
+              <em className={`${styles.emphasis} ds-emphasis`}>best-fit college.</em>
             </h1>
-            <p className={styles.introCopy}>
+            <p className={`${styles.introCopy} ds-body`}>
               Answer five focused questions so I can understand your goals, identify where
               support matters most, and recommend the right next step.
             </p>
-            <button className={styles.primaryButton} type="button" onClick={begin}>
+            <Button className={styles.primaryButton} size="large" onClick={begin}>
               Start the assessment
               <span aria-hidden="true">→</span>
-            </button>
+            </Button>
             <p className={styles.introDuration}>
               <span aria-hidden="true">◷</span>
               Takes about 3 minutes
@@ -772,52 +540,13 @@ export function ApplyFunnel() {
           </div>
         )}
 
-        {phase === "questions" && activeInfoSlide && (
-          <section
-            className={`${styles.card} ${styles.infoSlideCard}`}
-            aria-labelledby="apply-info-slide-title"
-          >
-            <div className={styles.infoSlidePhoto}>
-              <Image
-                alt={activeInfoSlide.imageAlt}
-                height={220}
-                src={activeInfoSlide.imageSrc}
-                width={220}
-              />
-            </div>
-            <h1
-              className={styles.infoSlideTitle}
-              id="apply-info-slide-title"
-              ref={headingRef}
-              tabIndex={-1}
-            >
-              {activeInfoSlide.title}
-            </h1>
-            <p className={styles.infoSlideCopy}>{activeInfoSlide.body}</p>
-            <a
-              className={styles.infoSlideSource}
-              href={activeInfoSlide.sourceUrl}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              Source: {activeInfoSlide.sourceLabel}
-            </a>
-            <div className={styles.actions}>
-              <button className={styles.primaryButton} type="button" onClick={continueFromInfoSlide}>
-                Continue
-                <span aria-hidden="true">→</span>
-              </button>
-            </div>
-          </section>
-        )}
-
         {phase === "questions" && showSchoolComparison && (
           <section
             className={`${styles.card} ${styles.schoolComparisonCard} ${showApplicationLevers ? styles.applicationLeversCard : ""}`}
             aria-labelledby="school-comparison-title"
           >
             <h1
-              className={styles.schoolComparisonTitle}
+              className={`${styles.schoolComparisonTitle} ds-display ds-display--md`}
               id="school-comparison-title"
               ref={headingRef}
               tabIndex={-1}
@@ -827,7 +556,7 @@ export function ApplyFunnel() {
                 : "Here’s how selective your top schools are."}
             </h1>
             {!showApplicationLevers && (
-              <p className={styles.schoolComparisonIntro}>
+              <p className={`${styles.schoolComparisonIntro} ds-body`}>
                 Overall undergraduate acceptance rates from the {SCHOOL_ADMISSIONS_YEAR_LABEL}—not
                 a prediction of any individual student&apos;s result.
               </p>
@@ -837,7 +566,7 @@ export function ApplyFunnel() {
                 {APPLICATION_LEVERS.map((lever) => (
                   <article className={styles.applicationLeverCard} key={lever.title}>
                     <strong>{lever.metric}</strong>
-                    <h2>{lever.title}</h2>
+                    <h2 className="ds-heading ds-heading--sm">{lever.title}</h2>
                     <span>{lever.action}</span>
                   </article>
                 ))}
@@ -856,7 +585,7 @@ export function ApplyFunnel() {
                           {name.charAt(0)}
                         </span>
                       )}
-                      <h2>{name}</h2>
+                      <h2 className="ds-heading ds-heading--sm">{name}</h2>
                       <strong>{formatAcceptanceRate(profile?.acceptanceRate)}</strong>
                       <span>overall acceptance rate</span>
                     </article>
@@ -865,19 +594,18 @@ export function ApplyFunnel() {
               </>
             )}
             <div className={styles.actions}>
-              <button
+              <Button
                 className={styles.primaryButton}
-                type="button"
                 onClick={continueFromSchoolComparison}
               >
                 Continue
                 <span aria-hidden="true">→</span>
-              </button>
+              </Button>
             </div>
           </section>
         )}
 
-        {phase === "questions" && question && !activeInfoSlide && !showSchoolComparison && (
+        {phase === "questions" && question && !showSchoolComparison && (
           <form
             className={styles.card}
             key={question.key}
@@ -886,14 +614,13 @@ export function ApplyFunnel() {
               continueForward();
             }}
           >
-            <AdvisorHeader message={question.advisorMessage} />
             <fieldset className={styles.fieldset}>
               <legend className={styles.visuallyHidden}>{question.prompt}</legend>
               <div className={styles.questionHeading}>
-                <h1 className={styles.questionTitle} ref={headingRef} tabIndex={-1}>
+                <h1 className={`${styles.questionTitle} ds-display ds-display--md`} ref={headingRef} tabIndex={-1}>
                   {question.prompt}
                 </h1>
-                <p className={styles.supporting}>{question.supporting}</p>
+                <p className={`${styles.supporting} ds-body`}>{question.supporting}</p>
               </div>
 
               {question.textInputPlaceholder ? (
@@ -923,7 +650,7 @@ export function ApplyFunnel() {
                       type="search"
                       value={textAnswerDrafts[question.key] ?? ""}
                     />
-                    <button
+                    <Button
                       className={styles.addTextAnswerButton}
                       disabled={
                         !textAnswerDrafts[question.key]?.trim() ||
@@ -933,10 +660,10 @@ export function ApplyFunnel() {
                         )
                       }
                       onClick={addTextAnswer}
-                      type="button"
+                      size="compact"
                     >
                       Add school
-                    </button>
+                    </Button>
                   </div>
                   {question.searchableAnswers && (
                     <datalist id={`${question.key}-options`}>
@@ -1035,22 +762,21 @@ export function ApplyFunnel() {
               className={`${styles.actions} ${styles.questionActions}`}
               ref={questionActionsRef}
             >
-              <button className={styles.primaryButton} type="submit" disabled={!canContinue}>
+              <Button className={styles.primaryButton} type="submit" disabled={!canContinue}>
                 {step === QUESTIONS.length - 1 ? "See your next step" : "Continue"}
                 <span aria-hidden="true">→</span>
-              </button>
+              </Button>
             </div>
           </form>
         )}
 
         {phase === "complete" && (
           <section className={`${styles.card} ${styles.resultCard}`} aria-labelledby="apply-result-title">
-            <AdvisorHeader message="Based on what you shared, a private strategy call is the right next step." />
             <div className={styles.resultIcon} aria-hidden="true">
               <span>✓</span>
             </div>
             <p className={styles.eyebrow}>You qualify</p>
-            <h1 className={styles.displayTitle} id="apply-result-title" ref={headingRef} tabIndex={-1}>
+            <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-result-title" ref={headingRef} tabIndex={-1}>
               You&apos;re qualified to schedule a private call.
             </h1>
             <dl className={styles.summary}>
@@ -1063,10 +789,10 @@ export function ApplyFunnel() {
             </dl>
 
             <div className={styles.actions}>
-              <button className={styles.primaryButton} type="button" onClick={continueToPreBooking}>
+              <Button className={styles.primaryButton} onClick={continueToPreBooking}>
                 Continue
                 <span aria-hidden="true">→</span>
-              </button>
+              </Button>
             </div>
           </section>
         )}
@@ -1080,8 +806,7 @@ export function ApplyFunnel() {
               continueToBooking();
             }}
           >
-            <AdvisorHeader message="Ask anything that would help you feel prepared for our conversation." />
-            <h1 className={styles.displayTitle} id="apply-prebooking-title" ref={headingRef} tabIndex={-1}>
+            <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-prebooking-title" ref={headingRef} tabIndex={-1}>
               Any questions before booking?
             </h1>
             <label className={styles.visuallyHidden} htmlFor="prebooking-question">
@@ -1095,23 +820,22 @@ export function ApplyFunnel() {
               value={preBookingQuestion}
             />
             <div className={styles.actions}>
-              <button className={styles.primaryButton} type="submit">
+              <Button className={styles.primaryButton} type="submit">
                 Continue to booking
                 <span aria-hidden="true">→</span>
-              </button>
+              </Button>
             </div>
           </form>
         )}
 
         {phase === "booking" && (
           <section className={`${styles.card} ${styles.resultCard}`} aria-labelledby="apply-booking-title">
-            <AdvisorHeader message="Choose a time that works for your family, and we’ll take it from there." />
             <p className={styles.eyebrow}>Final step</p>
-            <h1 className={styles.displayTitle} id="apply-booking-title" ref={headingRef} tabIndex={-1}>
+            <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-booking-title" ref={headingRef} tabIndex={-1}>
               Book your private call.
             </h1>
             <div className={styles.actions}>
-              <a
+              <ButtonLink
                 className={styles.primaryLink}
                 href="https://calendly.com/jeffrey-pegasusprep/discovery"
                 onClick={recordBookingClick}
@@ -1120,7 +844,7 @@ export function ApplyFunnel() {
               >
                 Choose a time
                 <span aria-hidden="true">↗</span>
-              </a>
+              </ButtonLink>
             </div>
           </section>
         )}
@@ -1132,7 +856,7 @@ export function ApplyFunnel() {
             className={`${styles.card} ${styles.processingCard}`}
           >
             <span className={styles.processingSpinner} aria-hidden="true" />
-            <h1 id="apply-processing-title" ref={headingRef} tabIndex={-1}>
+            <h1 className="ds-display ds-display--md" id="apply-processing-title" ref={headingRef} tabIndex={-1}>
               Reviewing your answers…
             </h1>
           </section>
