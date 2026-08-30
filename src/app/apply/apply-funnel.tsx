@@ -147,7 +147,7 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-type Phase = "intro" | "questions" | "processing" | "complete" | "prebooking" | "booking";
+type Phase = "intro" | "questions" | "processing" | "complete" | "booking";
 type Answers = Record<string, string>;
 type ScreenExitReason = "back" | "completed" | "page_exit" | "screen_changed";
 const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
@@ -181,7 +181,6 @@ export function ApplyFunnel() {
   const [textAnswerDrafts, setTextAnswerDrafts] = useState<Answers>({});
   const [showSchoolComparison, setShowSchoolComparison] = useState(false);
   const [showApplicationLevers, setShowApplicationLevers] = useState(false);
-  const [preBookingQuestion, setPreBookingQuestion] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const questionActionsRef = useRef<HTMLDivElement>(null);
   const screenExitReasonRef = useRef<ScreenExitReason>("screen_changed");
@@ -208,21 +207,12 @@ export function ApplyFunnel() {
             type: "processing",
             index: QUESTIONS.length + 1,
           }
-      : phase === "prebooking"
-        ? {
-            id: "prebooking_questions",
-            name: "Questions before booking",
-            type: "prebooking",
-            index: QUESTIONS.length + 3,
-            questionKey: "prebooking_question",
-            questionLabel: "Any questions before booking?",
-          }
       : phase === "booking"
         ? {
             id: "booking",
             name: "Schedule a private call",
             type: "booking",
-            index: QUESTIONS.length + 4,
+            index: QUESTIONS.length + 3,
           }
       : phase === "complete"
         ? { id: "complete", name: "Qualified result", type: "complete", index: QUESTIONS.length + 2 }
@@ -323,7 +313,6 @@ export function ApplyFunnel() {
     screenExitReasonRef.current = "completed";
     setShowSchoolComparison(false);
     setShowApplicationLevers(false);
-    setPreBookingQuestion("");
     setPhase("questions");
     setStep(0);
   };
@@ -446,22 +435,7 @@ export function ApplyFunnel() {
     advanceFromCurrentQuestion();
   };
 
-  const continueToPreBooking = () => {
-    posthog.capture(
-      APPLY_FUNNEL_TRACKING.events.screenCompleted,
-      applyScreenProperties(trackingScreen),
-    );
-    screenExitReasonRef.current = "completed";
-    setPhase("prebooking");
-  };
-
   const continueToBooking = () => {
-    const questionAnswer = preBookingQuestion.trim();
-    posthog.capture(APPLY_FUNNEL_TRACKING.events.answerRecorded, {
-      ...applyScreenProperties(trackingScreen),
-      answer_key: questionAnswer || "no_question",
-      answer_label: questionAnswer || "No question",
-    });
     posthog.capture(
       APPLY_FUNNEL_TRACKING.events.screenCompleted,
       applyScreenProperties(trackingScreen),
@@ -478,7 +452,6 @@ export function ApplyFunnel() {
     posthog.capture("booking_link_clicked", {
       funnel: APPLY_FUNNEL_TRACKING.funnel,
       funnel_version: APPLY_FUNNEL_TRACKING.version,
-      prebooking_question: preBookingQuestion.trim() || "no_question",
     });
     screenExitReasonRef.current = "completed";
   };
@@ -487,7 +460,6 @@ export function ApplyFunnel() {
     screenExitReasonRef.current = "screen_changed";
     setShowApplicationLevers(false);
     setShowSchoolComparison(false);
-    setPreBookingQuestion("");
     setStep(nextStep);
     setPhase("questions");
   };
@@ -517,6 +489,10 @@ export function ApplyFunnel() {
         {devNavigator}
         {phase === "intro" && (
           <section className={`${CARD_CLASS_NAME} ${styles.introCard}`} aria-labelledby="apply-intro-title">
+            <div className={`${styles.introBrandSignature} ds-eyebrow`}>
+              <BrandMark className={styles.introBrandMark} />
+              <span>Pegasus Prep Education</span>
+            </div>
             <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-intro-title">
               Find the right path to your child&apos;s{" "}
               <em className={`${styles.emphasis} ds-emphasis`}>best-fit college.</em>
@@ -529,17 +505,7 @@ export function ApplyFunnel() {
               Start the assessment
               <span aria-hidden="true">→</span>
             </Button>
-            <p className={styles.introDuration}>
-              <span aria-hidden="true">◷</span>
-              Takes about 3 minutes
-            </p>
           </section>
-        )}
-        {phase === "intro" && (
-          <div className={styles.introBrandSignature}>
-            <BrandMark className={styles.introBrandMark} />
-            <span>Pegasus Prep Education</span>
-          </div>
         )}
 
         {phase === "questions" && showSchoolComparison && (
@@ -559,14 +525,16 @@ export function ApplyFunnel() {
             </h1>
             {!showApplicationLevers && (
               <p className={`${styles.schoolComparisonIntro} ds-body`}>
-                Overall undergraduate acceptance rates from the {SCHOOL_ADMISSIONS_YEAR_LABEL}—not
-                a prediction of any individual student&apos;s result.
+                Overall undergraduate acceptance rates from the {SCHOOL_ADMISSIONS_YEAR_LABEL}.
               </p>
             )}
             {showApplicationLevers ? (
               <div className={`${styles.schoolComparisonGrid} ${styles.applicationLeversGrid}`}>
                 {APPLICATION_LEVERS.map((lever) => (
-                  <article className={styles.applicationLeverCard} key={lever.title}>
+                  <article
+                    className={`${styles.applicationLeverCard} ds-surface ds-surface--flat`}
+                    key={lever.title}
+                  >
                     <strong>{lever.metric}</strong>
                     <h2 className="ds-heading ds-heading--sm">{lever.title}</h2>
                     <span>{lever.action}</span>
@@ -575,9 +543,9 @@ export function ApplyFunnel() {
               </div>
             ) : (
               <>
-                <div className={styles.schoolComparisonGrid}>
+                <div className={styles.schoolRateList}>
                   {selectedSchoolProfiles.map(({ logo, name, profile }) => (
-                    <article className={styles.schoolRateCard} key={name}>
+                    <article className={`${styles.schoolRateCard} ds-surface ds-surface--flat`} key={name}>
                       {logo ? (
                         <span className={styles.schoolRateLogo}>
                           <Image alt={logo.logoAlt} height={52} src={logo.logoSrc} width={52} />
@@ -589,7 +557,6 @@ export function ApplyFunnel() {
                       )}
                       <h2 className="ds-heading ds-heading--sm">{name}</h2>
                       <strong>{formatAcceptanceRate(profile?.acceptanceRate)}</strong>
-                      <span>overall acceptance rate</span>
                     </article>
                   ))}
                 </div>
@@ -795,43 +762,12 @@ export function ApplyFunnel() {
             </dl>
 
             <div className={styles.actions}>
-              <Button className={styles.primaryButton} onClick={continueToPreBooking}>
+              <Button className={styles.primaryButton} onClick={continueToBooking}>
                 Continue
                 <span aria-hidden="true">→</span>
               </Button>
             </div>
           </section>
-        )}
-
-        {phase === "prebooking" && (
-          <form
-            aria-labelledby="apply-prebooking-title"
-            className={`${CARD_CLASS_NAME} ${styles.resultCard}`}
-            onSubmit={(event) => {
-              event.preventDefault();
-              continueToBooking();
-            }}
-          >
-            <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-prebooking-title" ref={headingRef} tabIndex={-1}>
-              Any questions before booking?
-            </h1>
-            <label className={styles.visuallyHidden} htmlFor="prebooking-question">
-              Your question
-            </label>
-            <textarea
-              className={`${styles.textAnswer} ${styles.preBookingTextarea}`}
-              id="prebooking-question"
-              onChange={(event) => setPreBookingQuestion(event.target.value)}
-              placeholder="Type your question (optional)"
-              value={preBookingQuestion}
-            />
-            <div className={styles.actions}>
-              <Button className={styles.primaryButton} type="submit">
-                Continue to booking
-                <span aria-hidden="true">→</span>
-              </Button>
-            </div>
-          </form>
         )}
 
         {phase === "booking" && (

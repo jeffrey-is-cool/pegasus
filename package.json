@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "check": "npm run check:design && npm run typecheck",
+    "check:design": "node scripts/check-design-system.mjs",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
