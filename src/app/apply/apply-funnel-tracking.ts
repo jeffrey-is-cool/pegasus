@@ -3,7 +3,6 @@ type ApplyScreenType =
   | "question"
   | "info"
   | "processing"
-  | "prebooking"
   | "booking"
   | "complete";
 
