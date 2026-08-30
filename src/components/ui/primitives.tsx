@@ -1,6 +1,11 @@
-import type { HTMLAttributes, ReactNode } from "react";
+import type {
+  AnchorHTMLAttributes,
+  ButtonHTMLAttributes,
+  HTMLAttributes,
+  ReactNode,
+} from "react";
 
-function classes(...values: Array<string | undefined | false>) {
+export function classes(...values: Array<string | undefined | false>) {
   return values.filter(Boolean).join(" ");
 }
 
@@ -60,4 +65,54 @@ export function Grid({ children, className, ...props }: PrimitiveProps) {
       {children}
     </div>
   );
+}
+
+type ButtonAppearance = "outline-inverse" | "primary" | "text";
+
+type ButtonClassOptions = {
+  appearance?: ButtonAppearance;
+  className?: string;
+  size?: "compact" | "default" | "large";
+};
+
+type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & ButtonClassOptions;
+
+export function buttonClasses({
+  appearance = "primary",
+  className,
+  size = "default",
+}: ButtonClassOptions = {}) {
+  return classes(
+    appearance === "text" ? "ds-text-button" : "ds-button",
+    appearance === "outline-inverse" && "ds-button--outline-inverse",
+    appearance !== "text" && size !== "default" && `ds-button--${size}`,
+    className,
+  );
+}
+
+export function Button({
+  appearance = "primary",
+  className,
+  size = "default",
+  type = "button",
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={buttonClasses({ appearance, className, size })}
+      type={type}
+      {...props}
+    />
+  );
+}
+
+type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & ButtonClassOptions;
+
+export function ButtonLink({
+  appearance = "primary",
+  className,
+  size = "default",
+  ...props
+}: ButtonLinkProps) {
+  return <a className={buttonClasses({ appearance, className, size })} {...props} />;
 }

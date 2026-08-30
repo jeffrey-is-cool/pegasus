@@ -1,38 +1,75 @@
 # Pegasus design system
 
-The Pegasus visual language is quiet, editorial, and private-office rather than conventional education software.
+Pegasus uses a private-office visual language derived from the current Admittedly-inspired brand direction: Inter Tight typography, deep ink/navy surfaces, warm ivory pages, white cards, and restrained gold accents.
 
-## Foundations
+## Canonical sources
 
-- Page background: `--color-background-page`
-- White cards and panels: `--color-background-surface`
-- Deep navy panels: `--gradient-deep`
-- Primary and secondary text: `--color-text-primary`, `--color-text-secondary`
-- Accents: `--color-accent-blue`, `--color-accent-pink`, `--gradient-accent`
-- Borders: `--color-border-default`, `--color-border-strong`, `--color-border-inverse`
+- Foundations and semantic values: `src/styles/tokens.css`
+- Reusable visual primitives: `src/styles/primitives.css`
+- React wrappers: `src/components/ui/primitives.tsx`
+- Public-page layout only: `src/app/globals.css`
+- Funnel layout and state only: `src/app/apply/apply.module.css`
+- Reporting-specific layout and data colors: `src/app/dev/funnel-stats.module.css`
 
-All source values live in `src/styles/tokens.css`. Components should consume tokens rather than introducing one-off colors, spacing, radii, or shadows.
+Route styles must consume shared tokens. Do not redefine the brand palette, button appearance, heading scale, body scale, card radius, control radius, shadows, or focus ring in a route stylesheet.
 
-## Shape and spacing
+## Brand foundations
 
-The radius scale runs from `--radius-xs` for buttons to `--radius-3xl` for feature panels. Use `--radius-full` only for badges and dots. Spacing uses the `--space-*` scale, and page content uses `--container-content`, `--container-hero`, and `--container-reading`.
+- Page ivory: `--color-background-page`
+- White surface: `--color-background-surface`
+- Ink: `--color-text-primary`
+- Deep navy: `--color-background-deep-raised`
+- Gold: `--color-accent-gold`
+- Gold hover: `--color-accent-gold-hover`
+- Gold selection tint: `--color-accent-gold-soft`
+- Deep panels: `--gradient-deep`
+- Inter Tight: `--font-family-sans`
+- Italic display emphasis: `--font-family-emphasis`
 
-## Layout primitives
+## Buttons and controls
 
-`src/components/ui/primitives.tsx` exports:
+Use `.ds-button` for every primary action. Available modifiers:
 
-- `Container` for content, hero, and reading widths
-- `Surface` for default, subtle, and deep panels
-- `Stack` for vertical rhythm
-- `Cluster` for wrapped horizontal groups
-- `Grid` for responsive card layouts
+- `.ds-button--large` for hero and closing calls to action
+- `.ds-button--compact` for compact form actions
+- `.ds-button--outline-inverse` for a secondary action on a dark surface
+- `.ds-text-button` for disclosure and low-emphasis actions
 
-The corresponding `.ds-*` classes are available for cases where a semantic HTML element is more appropriate than a wrapper component. Divider, eyebrow, and accent-line primitives live in `src/styles/primitives.css`.
+`Button` in `src/components/ui/primitives.tsx` applies these classes to native buttons. `BookingLink` applies the primary button by default and supports `size="large"`; pass `appearance="text"` only where a link should remain inline.
+
+Selection tiles, chips, segmented controls, and development step controls are not calls to action. They may retain route-owned layouts, but must use the shared control radius, border, focus ring, typography, and semantic colors.
+
+## Typography
+
+- `.ds-display.ds-display--xl`: public hero title
+- `.ds-display.ds-display--lg`: section and closing CTA titles
+- `.ds-display.ds-display--md`: funnel screen titles
+- `.ds-heading.ds-heading--md`: medium section heading
+- `.ds-heading.ds-heading--sm`: card heading
+- `.ds-body`: standard paragraph
+- `.ds-body.ds-body--lead`: lead paragraph
+- `.ds-emphasis`: italic display emphasis inside a title
+
+Route classes may control width, margins, alignment, and responsive layout. They must not override the shared font family, weight, tracking, or semantic scale without a documented exception.
+
+## Cards and layout
+
+- Use `--card-radius` for cards and panels.
+- Use `--control-radius` for buttons, chips, dots, and segmented controls.
+- Use `.ds-surface` or the corresponding tokens for surface border, radius, background, and elevation.
+- Use the `--space-*` scale for gaps and padding.
+- Use `--container-content`, `--container-hero`, and `--container-reading` for width constraints.
+- Use `.ds-logo-frame` around third-party or university marks so mixed source aspect ratios remain contained without route-specific image sizing.
+
+## Development dashboard exception
+
+The `/dev` dashboard keeps orange and red for data-series differentiation and error communication. Those are reporting semantics, not public brand colors. Its font, surfaces, borders, controls, radii, and focus treatment still consume the shared system.
 
 ## Rules
 
-1. Reuse a token before adding a raw value.
-2. Use the blue-to-pink gradient as a restrained accent, not a large background.
-3. Reserve deep navy surfaces for high-emphasis proof, video, and founder content.
-4. Keep cards white with quiet borders and soft elevation.
-5. Prefer generous spacing and narrow reading widths over dense layouts.
+1. Reuse a semantic token or primitive before adding a raw value.
+2. One visual role gets one implementation; do not append override skins to route stylesheets.
+3. Keep public primary actions gold pills with the shared hover, disabled, and focus behavior.
+4. Keep body copy Inter Tight and reserve the italic display family for short emphasis only.
+5. Keep cards ivory or white with 16px radii and quiet borders.
+6. Production builds are not part of normal design edits; use static checks unless a release build is explicitly requested.

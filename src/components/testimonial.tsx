@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "@/components/ui/primitives";
 
 type TestimonialProps = {
   quote: string;
@@ -26,8 +27,11 @@ export function Testimonial({
 
   return (
     <article className="t-item">
-      <div className="t-logo">
-        <Image src={logo} alt={logoAlt} width={logoWidth} height={logoHeight} />
+      <div className="t-card-header">
+        <div className="t-logo">
+          <Image src={logo} alt={logoAlt} width={logoWidth} height={logoHeight} />
+        </div>
+        <p className="t-attr">{attribution}</p>
       </div>
       <div className="t-content">
         <blockquote>
@@ -35,11 +39,10 @@ export function Testimonial({
           {more ? <span className={expanded ? "t-hidden open" : "t-hidden"}>{more}</span> : null}
         </blockquote>
         {more ? (
-          <button className="t-expand" type="button" onClick={() => setExpanded((value) => !value)}>
+          <Button appearance="text" className="t-expand" onClick={() => setExpanded((value) => !value)}>
             {expanded ? "Read less ↑" : "Read more ↓"}
-          </button>
+          </Button>
         ) : null}
-        <div className="t-attr">{attribution}</div>
       </div>
     </article>
   );
