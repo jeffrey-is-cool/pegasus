@@ -153,7 +153,6 @@
   --shadow-accent: 0 10px 28px var(--color-accent-gold-shadow);
   --shadow-focus-accent: 0 0 0 3px var(--color-accent-gold-shadow);
   --shadow-focus-accent-subtle: 0 0 0 2px var(--color-accent-gold-ring);
-
   /* Controls */
   --button-height: 52px;
   --button-height-large: 64px;

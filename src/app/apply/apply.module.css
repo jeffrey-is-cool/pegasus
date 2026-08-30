@@ -33,26 +33,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-5);
-  color: var(--color-text-inverse);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  margin-bottom: var(--space-6);
 }
 
 .introBrandMark {
   width: 23px;
   height: 26px;
-}
-
-.introBrandMark > g {
-  display: none;
-}
-
-.introBrandMark > path {
-  display: block;
-  fill: var(--color-text-inverse);
 }
 
 .displayTitle,
@@ -75,20 +61,10 @@
   margin: var(--space-6) auto var(--space-8);
 }
 
-.introDuration {
-  width: fit-content;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin: var(--space-5) auto 0;
+.introCopy,
+.schoolComparisonIntro,
+.supporting {
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-}
-
-.introDuration span {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
 }
 
 .schoolComparisonCard {
@@ -112,33 +88,45 @@
   gap: var(--space-3);
 }
 
-.schoolRateCard,
+.schoolRateList {
+  display: grid;
+  gap: var(--space-3);
+}
+
 .applicationLeverCard {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title metric"
+    "description metric";
   align-items: center;
-  border: var(--border-width) solid var(--color-border-default);
-  border-radius: var(--card-radius);
-  background: var(--color-background-surface);
-  box-shadow: var(--shadow-soft);
+  gap: var(--space-1) var(--space-4);
+  border-color: var(--color-border-default);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
 }
 
 .schoolRateCard {
-  padding: var(--space-5) var(--space-4);
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  border-color: var(--color-border-default);
+  padding: var(--space-3) var(--space-4);
 }
 
 .schoolRateLogo,
 .schoolRateMonogram {
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   display: grid;
   place-items: center;
   overflow: hidden;
-  margin-bottom: var(--space-4);
   border: var(--border-width) solid var(--color-border-default);
   border-radius: var(--radius-md);
-  padding: 6px;
+  padding: var(--space-2);
   background: var(--color-background-page);
 }
 
@@ -155,22 +143,31 @@
 
 .schoolRateCard h2,
 .applicationLeverCard h2 {
-  margin: 0 0 var(--space-2);
+  margin: 0;
 }
 
-.schoolRateCard strong,
+.schoolRateCard h2 {
+  margin: 0;
+  text-align: left;
+}
+
 .applicationLeverCard strong {
+  grid-area: metric;
   color: var(--color-accent-gold);
-  font-size: clamp(2.25rem, 5vw, 3.4rem);
+  font-size: var(--font-size-heading-md);
   font-weight: var(--font-weight-medium);
   letter-spacing: var(--tracking-display);
   line-height: 1;
+  white-space: nowrap;
 }
 
-.schoolRateCard > span:last-child {
-  margin-top: var(--space-2);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+.schoolRateCard strong {
+  color: var(--color-accent-gold);
+  font-size: var(--font-size-heading-md);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .applicationLeversCard,
@@ -179,11 +176,11 @@
 }
 
 .applicationLeversGrid {
-  margin-top: var(--space-8);
+  grid-template-columns: 1fr;
+  margin-top: var(--space-6);
 }
 
 .applicationLeverCard {
-  padding: var(--space-6) var(--space-4);
   animation: lever-card-in 520ms var(--ease-standard) both;
 }
 
@@ -196,12 +193,12 @@
 }
 
 .applicationLeverCard h2 {
-  margin-top: var(--space-3);
+  grid-area: title;
 }
 
 .applicationLeverCard span {
-  margin-top: var(--space-3);
-  color: var(--color-text-secondary);
+  grid-area: description;
+  color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
 }
@@ -537,17 +534,18 @@
 }
 
 .summary {
-  margin: var(--space-8) auto;
+  margin: var(--space-6) auto;
   border-block: var(--border-width) solid var(--color-border-default);
-  padding: var(--space-2) var(--space-6);
+  padding: var(--space-1) var(--space-4);
   text-align: left;
 }
 
 .summaryRow {
   display: grid;
-  grid-template-columns: minmax(120px, 0.75fr) 1.25fr;
-  gap: var(--space-5);
-  padding: var(--space-4) 0;
+  grid-template-columns: minmax(110px, 0.65fr) 1.35fr;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
 }
 
 .summaryRow + .summaryRow {
@@ -569,13 +567,6 @@
 
 .primaryLink {
   width: min(100%, 390px);
-}
-
-.preBookingTextarea {
-  min-height: 150px;
-  margin-top: var(--space-8);
-  padding: var(--space-5);
-  resize: vertical;
 }
 
 .processingCard {
@@ -638,11 +629,6 @@
     padding-block: var(--space-8);
   }
 
-  .introBrandSignature {
-    align-self: center;
-    margin-top: auto;
-  }
-
   .questionHeading {
     margin-bottom: var(--space-6);
   }
@@ -665,13 +651,48 @@
     padding-inline: 0;
   }
 
-  .summaryRow,
   .schoolComparisonGrid {
     grid-template-columns: 1fr;
+  }
+
+  .summaryRow {
+    grid-template-columns: minmax(100px, 0.65fr) 1.35fr;
   }
 }
 
 @media (max-width: 480px) {
+  .schoolRateCard {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: var(--space-3);
+    padding-inline: var(--space-3);
+  }
+
+  .schoolRateLogo,
+  .schoolRateMonogram {
+    width: 44px;
+    height: 44px;
+  }
+
+  .schoolRateCard h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .schoolRateCard strong {
+    font-size: var(--font-size-2xl);
+  }
+
+  .applicationLeverCard {
+    padding-inline: var(--space-3);
+  }
+
+  .applicationLeverCard h2 {
+    font-size: var(--font-size-lg);
+  }
+
+  .applicationLeverCard strong {
+    font-size: var(--font-size-2xl);
+  }
+
   .answerSuggestionGrid,
   .textAnswerRow {
     grid-template-columns: 1fr;

@@ -7,11 +7,26 @@ Pegasus uses a private-office visual language derived from the current Admittedl
 - Foundations and semantic values: `src/styles/tokens.css`
 - Reusable visual primitives: `src/styles/primitives.css`
 - React wrappers: `src/components/ui/primitives.tsx`
+- Site composition: `src/components/site-header.tsx`, `src/components/site-footer.tsx`
+- Repeated content patterns: `src/components/testimonial.tsx`, `src/components/video-testimonial.tsx`
 - Public-page layout only: `src/app/globals.css`
 - Funnel layout and state only: `src/app/apply/apply.module.css`
 - Reporting-specific layout and data colors: `src/app/dev/funnel-stats.module.css`
 
 Route styles must consume shared tokens. Do not redefine the brand palette, button appearance, heading scale, body scale, card radius, control radius, shadows, or focus ring in a route stylesheet.
+
+Run `npm run check:design` after design work. The check rejects raw colors, shadows, radii, font families, route-owned system tokens, native JSX buttons outside the shared wrapper, and manual button-class composition. `npm run check` runs this contract before TypeScript.
+
+## Component structure
+
+Pages compose the site in four layers:
+
+1. `tokens.css` owns raw visual values and semantic names.
+2. `primitives.css` and `ui/primitives.tsx` own reusable surfaces, layout, typography, controls, and action-link behavior.
+3. `src/components` owns site-wide and repeated patterns such as the header, footer, booking link, testimonials, and media cards.
+4. Route files own content, state, responsive arrangement, and feature-specific data presentation.
+
+If a visual role appears twice, promote it to a shared component or primitive. Route styles may position and size a shared component, but must not recreate its base appearance.
 
 ## Brand foundations
 
@@ -57,6 +72,7 @@ Route classes may control width, margins, alignment, and responsive layout. They
 - Use `--card-radius` for cards and panels.
 - Use `--control-radius` for buttons, chips, dots, and segmented controls.
 - Use `.ds-surface` or the corresponding tokens for surface border, radius, background, and elevation.
+- Compose surface modifiers—`--deep`, `--page`, `--accented`, `--media`, `--callout`, `--elevated`, and `--flat`—instead of restyling a card from scratch.
 - Use the `--space-*` scale for gaps and padding.
 - Use `--container-content`, `--container-hero`, and `--container-reading` for width constraints.
 - Use `.ds-logo-frame` around third-party or university marks so mixed source aspect ratios remain contained without route-specific image sizing.

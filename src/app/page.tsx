@@ -136,8 +136,7 @@ const heroSchools = [
   { src: "/logos/nyu_torch.png", alt: "New York University", width: 300, height: 300 },
 ] as const;
 
-const calendlyUrl =
-  "https://calendly.com/jeffrey-pegasusprep/discovery?embed_type=Inline&hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=344054&primary_color=b88a30";
+const calendlyUrl = "https://calendly.com/jeffrey-pegasusprep/discovery";
 
 export default function Home() {
   return (
@@ -331,14 +330,15 @@ export default function Home() {
               Tell us where your child is today and where your family wants them to go. We&apos;ll
               determine whether Pegasus is the right team to help them get there.
             </p>
-            <div className="cta-calendly-frame-wrap">
-              <iframe
-                className="calendly-frame"
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                src={calendlyUrl}
-                title="Schedule a private admissions meeting with Pegasus Education"
-              />
+            <div className="cta-action">
+              <ButtonLink
+                href={calendlyUrl}
+                rel="noopener noreferrer"
+                size="large"
+                target="_blank"
+              >
+                Schedule a Private Meeting
+              </ButtonLink>
             </div>
             <div className="cta-contacts">
               <a href="mailto:admissions@pegasusprep.education" className="cta-contact-item">
