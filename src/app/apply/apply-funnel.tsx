@@ -147,11 +147,12 @@ const QUESTIONS: Question[] = [
   },
 ];
 
-type Phase = "intro" | "questions" | "processing" | "complete" | "booking";
+type Phase = "intro" | "questions" | "contact" | "processing" | "complete" | "booking";
 type Answers = Record<string, string>;
 type ScreenExitReason = "back" | "completed" | "page_exit" | "screen_changed";
 const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
 const MULTI_VALUE_SEPARATOR = "|";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const CARD_CLASS_NAME = `${styles.card} ds-surface ds-surface--page ds-surface--accented ds-surface--elevated`;
 
 function selectedAnswerValues(value: string | undefined) {
@@ -174,6 +175,11 @@ function formatAcceptanceRate(rate: number | null | undefined) {
   return `${(rate * 100).toFixed(1)}%`;
 }
 
+function normalizePhoneNumber(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return digits.length === 11 && digits.startsWith("1") ? digits.slice(1) : digits;
+}
+
 export function ApplyFunnel() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [step, setStep] = useState(0);
@@ -181,6 +187,8 @@ export function ApplyFunnel() {
   const [textAnswerDrafts, setTextAnswerDrafts] = useState<Answers>({});
   const [showSchoolComparison, setShowSchoolComparison] = useState(false);
   const [showApplicationLevers, setShowApplicationLevers] = useState(false);
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
   const headingRef = useRef<HTMLHeadingElement>(null);
   const questionActionsRef = useRef<HTMLDivElement>(null);
   const screenExitReasonRef = useRef<ScreenExitReason>("screen_changed");
@@ -192,6 +200,9 @@ export function ApplyFunnel() {
   const customSelectedValues = selectedValues.filter(
     (value) => !question?.suggestedAnswers?.some((answer) => answer.value === value),
   );
+  const normalizedEmail = contactEmail.trim().toLowerCase();
+  const normalizedPhone = normalizePhoneNumber(contactPhone);
+  const canViewResults = EMAIL_PATTERN.test(normalizedEmail) && normalizedPhone.length === 10;
   const selectedSchoolProfiles = selectedValues.map((name) => ({
     logo: DREAM_SCHOOL_SUGGESTIONS.find((school) => school.value === name),
     name,
@@ -205,6 +216,13 @@ export function ApplyFunnel() {
             id: "processing",
             name: "Reviewing assessment answers",
             type: "processing",
+            index: QUESTIONS.length + 2,
+          }
+      : phase === "contact"
+        ? {
+            id: "contact_gate",
+            name: "Contact details to view results",
+            type: "contact",
             index: QUESTIONS.length + 1,
           }
       : phase === "booking"
@@ -212,10 +230,10 @@ export function ApplyFunnel() {
             id: "booking",
             name: "Schedule a private call",
             type: "booking",
-            index: QUESTIONS.length + 3,
+            index: QUESTIONS.length + 4,
           }
       : phase === "complete"
-        ? { id: "complete", name: "Qualified result", type: "complete", index: QUESTIONS.length + 2 }
+        ? { id: "complete", name: "Qualified result", type: "complete", index: QUESTIONS.length + 3 }
         : showSchoolComparison
           ? {
               id: showApplicationLevers
@@ -277,7 +295,7 @@ export function ApplyFunnel() {
           id: "processing",
           name: "Reviewing assessment answers",
           type: "processing",
-          index: QUESTIONS.length + 1,
+          index: QUESTIONS.length + 2,
         }),
       });
       screenExitReasonRef.current = "completed";
@@ -392,7 +410,7 @@ export function ApplyFunnel() {
         funnel_version: APPLY_FUNNEL_TRACKING.version,
         total_steps: QUESTIONS.length,
       });
-      setPhase("processing");
+      setPhase("contact");
       return;
     }
 
@@ -435,6 +453,28 @@ export function ApplyFunnel() {
     advanceFromCurrentQuestion();
   };
 
+  const submitContactDetails = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canViewResults) return;
+
+    posthog.identify(normalizedEmail, {
+      email: normalizedEmail,
+      phone: normalizedPhone,
+      lead_source: APPLY_FUNNEL_TRACKING.funnel,
+    });
+    posthog.capture(APPLY_FUNNEL_TRACKING.events.contactSubmitted, {
+      ...applyScreenProperties(trackingScreen),
+      has_email: true,
+      has_phone: true,
+    });
+    posthog.capture(
+      APPLY_FUNNEL_TRACKING.events.screenCompleted,
+      applyScreenProperties(trackingScreen),
+    );
+    screenExitReasonRef.current = "completed";
+    setPhase("processing");
+  };
+
   const continueToBooking = () => {
     posthog.capture(
       APPLY_FUNNEL_TRACKING.events.screenCompleted,
@@ -464,6 +504,13 @@ export function ApplyFunnel() {
     setPhase("questions");
   };
 
+  const jumpToContactGate = () => {
+    screenExitReasonRef.current = "screen_changed";
+    setShowApplicationLevers(false);
+    setShowSchoolComparison(false);
+    setPhase("contact");
+  };
+
   const devNavigator = IS_DEVELOPMENT ? (
     <nav className={styles.devNavigator} aria-label="Development step navigation">
       <span className={styles.devLabel}>Dev</span>
@@ -480,6 +527,16 @@ export function ApplyFunnel() {
           {index + 1}
         </Button>
       ))}
+      <Button
+        appearance="unstyled"
+        aria-current={phase === "contact" ? "step" : undefined}
+        className={`${styles.devStep} ${phase === "contact" ? styles.devStepActive : ""}`}
+        onClick={jumpToContactGate}
+        title="Contact details to view results"
+        type="button"
+      >
+        {QUESTIONS.length + 1}
+      </Button>
     </nav>
   ) : null;
 
@@ -768,6 +825,67 @@ export function ApplyFunnel() {
               </Button>
             </div>
           </section>
+        )}
+
+        {phase === "contact" && (
+          <form
+            aria-labelledby="apply-contact-title"
+            className={`${CARD_CLASS_NAME} ${styles.contactCard}`}
+            onSubmit={submitContactDetails}
+          >
+            <p className={`${styles.eyebrow} ds-eyebrow ds-eyebrow--accent ds-eyebrow--compact`}>
+              Your results are ready
+            </p>
+            <h1
+              className={`${styles.displayTitle} ds-display ds-display--md`}
+              id="apply-contact-title"
+              ref={headingRef}
+              tabIndex={-1}
+            >
+              Enter your details to view your results.
+            </h1>
+            <p className={`${styles.contactSupporting} ds-body`} id="apply-contact-supporting">
+              Add your email and phone number to unlock your personalized assessment results.
+            </p>
+            <div className={styles.contactFields}>
+              <label className={styles.contactField}>
+                <span>Email address</span>
+                <input
+                  aria-describedby="apply-contact-supporting"
+                  autoComplete="email"
+                  className={styles.textAnswer}
+                  name="email"
+                  onChange={(event) => setContactEmail(event.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  type="email"
+                  value={contactEmail}
+                />
+              </label>
+              <label className={styles.contactField}>
+                <span>Phone number</span>
+                <input
+                  aria-describedby="apply-contact-supporting"
+                  autoComplete="tel"
+                  className={styles.textAnswer}
+                  inputMode="tel"
+                  name="phone"
+                  onChange={(event) => setContactPhone(event.target.value)}
+                  pattern="(?:\\+?1[ .-]?)?(?:\\(?[2-9][0-9]{2}\\)?[ .-]?)?[2-9][0-9]{2}[ .-]?[0-9]{4}"
+                  placeholder="(555) 123-4567"
+                  required
+                  type="tel"
+                  value={contactPhone}
+                />
+              </label>
+            </div>
+            <div className={styles.actions}>
+              <Button className={styles.primaryButton} disabled={!canViewResults} type="submit">
+                View my results
+                <span aria-hidden="true">→</span>
+              </Button>
+            </div>
+          </form>
         )}
 
         {phase === "booking" && (

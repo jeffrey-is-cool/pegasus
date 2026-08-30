@@ -13,6 +13,11 @@ export type ApplyFunnelStepReport = {
   type: string;
   views: number;
   people: number;
+  previousPeople: number | null;
+  populationDelta: number | null;
+  dropoffPeople: number | null;
+  dropoffRate: number | null;
+  retentionRate: number | null;
   completions: number;
   completedPeople: number;
   completionRate: number | null;
@@ -33,9 +38,12 @@ export type ApplyFunnelAnswerReport = {
 export type ApplyFunnelReport = {
   status: ReportStatus;
   window: ApplyFunnelWindow;
+  version: number;
   summary: {
     starters: number;
     completed: number;
+    contactSubmissions: number;
+    contactRate: number | null;
     bookingClicks: number;
     completionRate: number | null;
     bookingRate: number | null;
@@ -51,6 +59,8 @@ export type ApplyFunnelReport = {
 const EMPTY_SUMMARY = {
   starters: 0,
   completed: 0,
+  contactSubmissions: 0,
+  contactRate: null,
   bookingClicks: 0,
   completionRate: null,
   bookingRate: null,
@@ -138,6 +148,7 @@ function emptyReport(
   return {
     status,
     window,
+    version: APPLY_FUNNEL_TRACKING.version,
     summary: EMPTY_SUMMARY,
     steps: [],
     answers: [],
@@ -156,19 +167,21 @@ export async function getApplyFunnelReport(
   }
 
   const funnel = hogQlString(APPLY_FUNNEL_TRACKING.funnel);
+  const funnelVersion = APPLY_FUNNEL_TRACKING.version;
   const threshold = windowThreshold(window);
   const summaryQuery = `
     SELECT
       event,
       toString(properties.screen_id) AS screen_id,
       count() AS events,
-      uniqExact(toString(distinct_id)) AS people,
+      uniqExact(toString(person_id)) AS people,
       min(timestamp) AS first_seen_at,
       max(timestamp) AS last_seen_at
     FROM events
     WHERE timestamp >= ${threshold}
-      AND event IN ('apply_screen_viewed', 'apply_funnel_completed', 'booking_link_clicked')
+      AND event IN ('apply_screen_viewed', 'apply_funnel_completed', 'apply_contact_submitted', 'booking_link_clicked')
       AND toString(properties.funnel) = ${funnel}
+      AND toIntOrZero(toString(properties.funnel_version)) = ${funnelVersion}
     GROUP BY event, screen_id
     ORDER BY event ASC, screen_id ASC
     LIMIT 200
@@ -180,16 +193,17 @@ export async function getApplyFunnelReport(
       toFloatOrZero(toString(properties.screen_index)) AS screen_index,
       any(toString(properties.screen_type)) AS screen_type,
       countIf(event = 'apply_screen_viewed') AS views,
-      uniqExactIf(toString(distinct_id), event = 'apply_screen_viewed') AS people,
+      uniqExactIf(toString(person_id), event = 'apply_screen_viewed') AS people,
       countIf(event = 'apply_screen_completed') AS completions,
-      uniqExactIf(toString(distinct_id), event = 'apply_screen_completed') AS completed_people,
+      uniqExactIf(toString(person_id), event = 'apply_screen_completed') AS completed_people,
       avgIf(toFloatOrZero(toString(properties.duration_seconds)), event = 'apply_screen_timed') AS average_duration,
       quantileIf(0.5)(toFloatOrZero(toString(properties.duration_seconds)), event = 'apply_screen_timed') AS median_duration,
-      uniqExactIf(toString(distinct_id), event = 'apply_screen_timed' AND toString(properties.exit_reason) = 'page_exit') AS page_exit_people
+      uniqExactIf(toString(person_id), event = 'apply_screen_timed' AND toString(properties.exit_reason) = 'page_exit') AS page_exit_people
     FROM events
     WHERE timestamp >= ${threshold}
       AND event IN ('apply_screen_viewed', 'apply_screen_completed', 'apply_screen_timed')
       AND toString(properties.funnel) = ${funnel}
+      AND toIntOrZero(toString(properties.funnel_version)) = ${funnelVersion}
       AND toString(properties.screen_id) != ''
     GROUP BY screen_id, screen_index
     ORDER BY screen_index ASC, screen_id ASC
@@ -201,11 +215,12 @@ export async function getApplyFunnelReport(
       if(toString(properties.question_label) = '', toString(properties.screen_name), toString(properties.question_label)) AS question_label,
       arrayJoin(splitByChar('|', toString(properties.answer_key))) AS answer_key,
       count() AS answers,
-      uniqExact(toString(distinct_id)) AS people
+      uniqExact(toString(person_id)) AS people
     FROM events
     WHERE timestamp >= ${threshold}
       AND event = 'apply_answer_recorded'
       AND toString(properties.funnel) = ${funnel}
+      AND toIntOrZero(toString(properties.funnel_version)) = ${funnelVersion}
       AND toString(properties.answer_key) != ''
     GROUP BY question_key, question_label, answer_key
     ORDER BY question_label ASC, answers DESC
@@ -235,6 +250,8 @@ export async function getApplyFunnelReport(
       event === APPLY_FUNNEL_TRACKING.events.screenViewed && screenId === "intro")?.people ?? 0;
     const completed = summaryEvents.find(({ event }) =>
       event === APPLY_FUNNEL_TRACKING.events.funnelCompleted)?.people ?? 0;
+    const contactSubmissions = summaryEvents.find(({ event }) =>
+      event === APPLY_FUNNEL_TRACKING.events.contactSubmitted)?.people ?? 0;
     const bookingClicks = summaryEvents.find(({ event }) =>
       event === "booking_link_clicked")?.people ?? 0;
     const observedStarts = summaryEvents
@@ -246,34 +263,55 @@ export async function getApplyFunnelReport(
       .filter(Boolean)
       .sort();
 
+    const baseSteps = stepRows.map((row) => {
+      const people = numberAt(row, 5);
+      const completedPeople = numberAt(row, 7);
+      return {
+        id: stringAt(row, 0),
+        name: stringAt(row, 1) || stringAt(row, 0),
+        index: numberAt(row, 2),
+        type: stringAt(row, 3),
+        views: numberAt(row, 4),
+        people,
+        completions: numberAt(row, 6),
+        completedPeople,
+        completionRate: rate(completedPeople, people),
+        averageDurationSeconds: nullableNumberAt(row, 8),
+        medianDurationSeconds: nullableNumberAt(row, 9),
+        pageExitPeople: numberAt(row, 10),
+      };
+    });
+    const steps = baseSteps.map((step, stepIndex): ApplyFunnelStepReport => {
+      const previousPeople = stepIndex === 0 ? null : baseSteps[stepIndex - 1].people;
+      const populationDelta = previousPeople == null ? null : step.people - previousPeople;
+      const dropoffPeople = previousPeople == null ? null : Math.max(0, previousPeople - step.people);
+
+      return {
+        ...step,
+        previousPeople,
+        populationDelta,
+        dropoffPeople,
+        dropoffRate: previousPeople == null || dropoffPeople == null
+          ? null
+          : rate(dropoffPeople, previousPeople),
+        retentionRate: previousPeople == null ? null : rate(step.people, previousPeople),
+      };
+    });
+
     return {
       status: "ready",
       window,
+      version: funnelVersion,
       summary: {
         starters,
         completed,
+        contactSubmissions,
+        contactRate: rate(contactSubmissions, starters),
         bookingClicks,
         completionRate: rate(completed, starters),
         bookingRate: rate(bookingClicks, starters),
       },
-      steps: stepRows.map((row) => {
-        const people = numberAt(row, 5);
-        const completedPeople = numberAt(row, 7);
-        return {
-          id: stringAt(row, 0),
-          name: stringAt(row, 1) || stringAt(row, 0),
-          index: numberAt(row, 2),
-          type: stringAt(row, 3),
-          views: numberAt(row, 4),
-          people,
-          completions: numberAt(row, 6),
-          completedPeople,
-          completionRate: rate(completedPeople, people),
-          averageDurationSeconds: nullableNumberAt(row, 8),
-          medianDurationSeconds: nullableNumberAt(row, 9),
-          pageExitPeople: numberAt(row, 10),
-        };
-      }),
+      steps,
       answers: answerRows.map((row) => {
         const answerKey = stringAt(row, 2);
         return {

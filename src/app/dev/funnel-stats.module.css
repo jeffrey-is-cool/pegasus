@@ -186,7 +186,7 @@
 
 .metricsGrid {
   display: grid;
-  grid-template-columns: repeat(8, minmax(95px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
   gap: 6px;
 }
 
@@ -356,6 +356,23 @@
   overflow-wrap: anywhere;
 }
 
+.chartLabels span,
+.chartLabels small {
+  display: block;
+  margin-top: 3px;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.chartLabels span {
+  color: var(--dev-text);
+  font-weight: 750;
+}
+
+.chartLabels small {
+  color: var(--dev-muted);
+}
+
 .stepRows {
   display: grid;
   gap: 6px;
@@ -363,7 +380,7 @@
 
 .stepRow {
   display: grid;
-  grid-template-columns: minmax(260px, 1.5fr) minmax(430px, 1fr);
+  grid-template-columns: minmax(260px, 1.25fr) minmax(620px, 2fr);
   align-items: center;
   gap: 14px;
   border-radius: var(--radius-md);
@@ -386,7 +403,7 @@
 
 .stepRow dl {
   display: grid;
-  grid-template-columns: repeat(5, minmax(62px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 8px;
   margin: 0;
 }

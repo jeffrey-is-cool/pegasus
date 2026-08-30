@@ -2,6 +2,7 @@ type ApplyScreenType =
   | "intro"
   | "question"
   | "info"
+  | "contact"
   | "processing"
   | "booking"
   | "complete";
@@ -101,9 +102,10 @@ export const APPLY_FUNNEL_ANSWER_OPTIONS = {
 
 export const APPLY_FUNNEL_TRACKING = {
   funnel: "private_admissions_assessment",
-  version: 2,
+  version: 3,
   events: {
     answerRecorded: "apply_answer_recorded",
+    contactSubmitted: "apply_contact_submitted",
     funnelCompleted: "apply_funnel_completed",
     funnelRestarted: "apply_funnel_restarted",
     screenCompleted: "apply_screen_completed",

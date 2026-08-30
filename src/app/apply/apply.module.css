@@ -24,7 +24,8 @@
 }
 
 .introCard,
-.resultCard {
+.resultCard,
+.contactCard {
   max-width: 700px;
   text-align: center;
 }
@@ -569,6 +570,28 @@
   width: min(100%, 390px);
 }
 
+.contactSupporting {
+  max-width: 540px;
+  margin: var(--space-4) auto var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.contactFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  text-align: left;
+}
+
+.contactField {
+  display: grid;
+  gap: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
 .processingCard {
   max-width: 620px;
   display: grid;
@@ -625,7 +648,8 @@
   }
 
   .introCard,
-  .resultCard {
+  .resultCard,
+  .contactCard {
     padding-block: var(--space-8);
   }
 
@@ -657,6 +681,10 @@
 
   .summaryRow {
     grid-template-columns: minmax(100px, 0.65fr) 1.35fr;
+  }
+
+  .contactFields {
+    grid-template-columns: 1fr;
   }
 }
 

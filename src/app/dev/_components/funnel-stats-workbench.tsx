@@ -38,6 +38,13 @@ function seconds(value: number | null) {
   return value == null ? "—" : `${value.toFixed(1)}s`;
 }
 
+function populationChange(step: ApplyFunnelStepReport) {
+  if (step.populationDelta == null) return "Entry population";
+  if (step.populationDelta > 0) return `+${metric(step.populationDelta)} net new`;
+  if (step.dropoffPeople === 0) return "No drop-off";
+  return `−${metric(step.dropoffPeople ?? 0)} · ${percent(step.dropoffRate)} drop-off`;
+}
+
 function timeframe(window: ApplyFunnelWindow) {
   return window === "today" ? "today" : `trailing ${window} days`;
 }
@@ -184,6 +191,8 @@ function FunnelDropoffChart({ steps }: { steps: ApplyFunnelStepReport[] }) {
             {steps.map((step) => (
               <div key={`label:${step.id}`}>
                 <strong>{step.name}</strong>
+                <span>{metric(step.people)} people</span>
+                <small>{populationChange(step)}</small>
               </div>
             ))}
           </div>
@@ -269,9 +278,11 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
                 </span>
               </div>
               <div className={styles.metricsGrid}>
-                <MetricCard label="Entry people" value={metric(visibleReport.summary.starters)} />
-                <MetricCard label="Last-step people" value={metric(lastStepPeople)} />
-                <MetricCard label="Step completion" value={percent(visibleReport.summary.starters ? (lastStepPeople / visibleReport.summary.starters) * 100 : null)} />
+                <MetricCard label="Entry population" value={metric(visibleReport.summary.starters)} />
+                <MetricCard label="Contact population" value={metric(visibleReport.summary.contactSubmissions)} />
+                <MetricCard label="Contact conversion" value={percent(visibleReport.summary.contactRate)} />
+                <MetricCard label="Last-step population" value={metric(lastStepPeople)} />
+                <MetricCard label="Step conversion" value={percent(visibleReport.summary.starters ? (lastStepPeople / visibleReport.summary.starters) * 100 : null)} />
                 <MetricCard label="Assessment complete" value={metric(visibleReport.summary.completed)} />
                 <MetricCard label="Booking clicks" value={metric(visibleReport.summary.bookingClicks)} />
                 <MetricCard label="Booking rate" value={percent(visibleReport.summary.bookingRate)} />
@@ -279,7 +290,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
                 <MetricCard label="Answer events" value={metric(answerEvents)} />
               </div>
               <p className={styles.metricNote}>
-                Funnel metrics use exact <code>funnel</code> matches in PostHog project 559881.
+                Populations are generated from observed screens for funnel version <code>{visibleReport.version}</code> in PostHog project 559881.
               </p>
               <div className={styles.routeRow}>
                 <div>
@@ -306,7 +317,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
             <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h2>Step drop-off</h2>
-                <span>PostHog people · screen completion and timing below</span>
+                <span>Dynamic person population and change from each preceding observed step</span>
               </div>
               <FunnelDropoffChart steps={steps} />
             </section>
@@ -345,7 +356,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
             <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h2>Exact step data</h2>
-                <span>People, views, completion, timing, and page exits per screen</span>
+                <span>Population, drop-off, completion, timing, and page exits per observed screen</span>
               </div>
               {steps.length ? (
                 <div className={styles.stepRows} role="table" aria-label="Exact funnel step data">
@@ -356,7 +367,10 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
                         <span>{step.id} · {step.type}</span>
                       </div>
                       <dl>
-                        <div><dt>People</dt><dd>{metric(step.people)}</dd></div>
+                        <div><dt>Population</dt><dd>{metric(step.people)}</dd></div>
+                        <div><dt>Previous</dt><dd>{step.previousPeople == null ? "—" : metric(step.previousPeople)}</dd></div>
+                        <div><dt>Drop-off</dt><dd>{step.dropoffPeople == null ? "—" : `${metric(step.dropoffPeople)} · ${percent(step.dropoffRate)}`}</dd></div>
+                        <div><dt>Retained</dt><dd>{percent(step.retentionRate)}</dd></div>
                         <div><dt>Views</dt><dd>{metric(step.views)}</dd></div>
                         <div><dt>Completed</dt><dd>{percent(step.completionRate)}</dd></div>
                         <div><dt>Avg time</dt><dd>{seconds(step.averageDurationSeconds)}</dd></div>
