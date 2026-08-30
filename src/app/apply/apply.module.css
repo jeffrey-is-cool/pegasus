@@ -1,0 +1,704 @@
+.shell {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background: var(--gradient-deep);
+  color: var(--color-text-primary);
+}
+
+.stage {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(var(--space-8), 6vh, var(--space-16)) var(--gutter-mobile);
+}
+
+.card {
+  width: min(100%, 760px);
+  padding: clamp(var(--space-8), 5vw, var(--space-12));
+  border: var(--border-width) solid var(--color-accent-gold-border);
+  border-radius: var(--card-radius);
+  background: var(--color-background-page);
+  box-shadow: var(--shadow-deep);
+  animation: card-in var(--duration-slow) var(--ease-standard) both;
+}
+
+.introCard,
+.resultCard {
+  max-width: 700px;
+  text-align: center;
+}
+
+.introBrandSignature {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  color: var(--color-text-inverse);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.introBrandMark {
+  width: 23px;
+  height: 26px;
+}
+
+.introBrandMark > g {
+  display: none;
+}
+
+.introBrandMark > path {
+  display: block;
+  fill: var(--color-text-inverse);
+}
+
+.displayTitle,
+.questionTitle,
+.schoolComparisonTitle {
+  color: var(--color-text-primary);
+}
+
+.displayTitle {
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.emphasis {
+  display: inline;
+}
+
+.introCopy {
+  max-width: 590px;
+  margin: var(--space-6) auto var(--space-8);
+}
+
+.introDuration {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-5) auto 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.introDuration span {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+}
+
+.schoolComparisonCard {
+  max-width: 820px;
+  text-align: center;
+}
+
+.schoolComparisonTitle {
+  max-width: 650px;
+  margin-inline: auto;
+}
+
+.schoolComparisonIntro {
+  max-width: 620px;
+  margin: var(--space-4) auto var(--space-8);
+}
+
+.schoolComparisonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.schoolRateCard,
+.applicationLeverCard {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--card-radius);
+  background: var(--color-background-surface);
+  box-shadow: var(--shadow-soft);
+}
+
+.schoolRateCard {
+  padding: var(--space-5) var(--space-4);
+}
+
+.schoolRateLogo,
+.schoolRateMonogram {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: 6px;
+  background: var(--color-background-page);
+}
+
+.schoolRateLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.schoolRateMonogram {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+}
+
+.schoolRateCard h2,
+.applicationLeverCard h2 {
+  margin: 0 0 var(--space-2);
+}
+
+.schoolRateCard strong,
+.applicationLeverCard strong {
+  color: var(--color-accent-gold);
+  font-size: clamp(2.25rem, 5vw, 3.4rem);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+}
+
+.schoolRateCard > span:last-child {
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.applicationLeversCard,
+.applicationLeversGrid {
+  perspective: 1200px;
+}
+
+.applicationLeversGrid {
+  margin-top: var(--space-8);
+}
+
+.applicationLeverCard {
+  padding: var(--space-6) var(--space-4);
+  animation: lever-card-in 520ms var(--ease-standard) both;
+}
+
+.applicationLeverCard:nth-child(2) {
+  animation-delay: 80ms;
+}
+
+.applicationLeverCard:nth-child(3) {
+  animation-delay: 160ms;
+}
+
+.applicationLeverCard h2 {
+  margin-top: var(--space-3);
+}
+
+.applicationLeverCard span {
+  margin-top: var(--space-3);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.primaryButton,
+.primaryLink {
+  min-width: min(100%, 260px);
+}
+
+.devNavigator {
+  position: fixed;
+  z-index: 10;
+  bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  left: 50%;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--card-radius);
+  background: rgba(250, 249, 245, 0.97);
+  box-shadow: var(--shadow-floating);
+  transform: translateX(-50%);
+}
+
+.devLabel {
+  margin-right: var(--space-1);
+  color: var(--color-text-muted);
+  font-size: 0.65rem;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.devStep {
+  width: 34px;
+  height: 34px;
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--control-radius);
+  background: var(--color-background-surface);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+}
+
+.devStep:hover {
+  border-color: var(--color-accent-gold);
+}
+
+.devStep:focus-visible,
+.answerSuggestion:focus-visible,
+.selectedAnswerChip:focus-visible,
+.option input:focus-visible + .optionBody {
+  outline: var(--focus-outline);
+  outline-offset: 3px;
+}
+
+.devStepActive {
+  border-color: var(--color-accent-gold);
+  background: var(--color-accent-gold);
+  color: var(--color-text-inverse);
+}
+
+.fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.questionHeading {
+  margin-bottom: var(--space-8);
+  text-align: center;
+}
+
+.questionTitle {
+  margin-inline: auto;
+}
+
+.displayTitle:focus,
+.questionTitle:focus,
+.schoolComparisonTitle:focus {
+  outline: none;
+}
+
+.supporting {
+  max-width: 570px;
+  margin: var(--space-4) auto 0;
+  font-size: var(--font-size-md);
+}
+
+.options {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.optionsOneColumn {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.optionsTwoColumns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.option {
+  display: block;
+  cursor: pointer;
+}
+
+.optionBody {
+  min-height: 76px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--card-radius);
+  background: var(--color-background-surface);
+  transition: border-color var(--duration-fast), background var(--duration-fast), box-shadow var(--duration-fast), transform var(--duration-fast);
+}
+
+.option:hover .optionBody {
+  border-color: var(--color-accent-gold);
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+.optionSelected .optionBody {
+  border-color: var(--color-accent-gold);
+  background: var(--color-accent-gold-soft);
+  box-shadow: 0 0 0 2px rgba(184, 138, 48, 0.22);
+}
+
+.optionIndicator {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--color-accent-gold);
+  border-radius: var(--control-radius);
+  background: var(--color-background-surface);
+}
+
+.optionIndicator span {
+  width: 10px;
+  height: 10px;
+  border-radius: inherit;
+  background: var(--gradient-accent);
+  opacity: 0;
+  transform: scale(0.45);
+  transition: opacity var(--duration-fast), transform var(--duration-fast);
+}
+
+.optionSelected .optionIndicator span {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.optionCopy {
+  min-width: 0;
+}
+
+.optionLabel {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.textAnswerGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.textAnswerRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--space-2);
+}
+
+.textAnswer {
+  width: 100%;
+  min-height: 64px;
+  padding: 0 var(--space-5);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--card-radius);
+  background: var(--color-background-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--font-size-md);
+  outline: none;
+}
+
+.textAnswer::placeholder {
+  color: var(--color-text-muted);
+}
+
+.textAnswer:focus {
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 0 0 3px rgba(184, 138, 48, 0.26);
+}
+
+.addTextAnswerButton {
+  align-self: stretch;
+}
+
+.answerSuggestions {
+  margin-top: var(--space-2);
+}
+
+.answerSuggestionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.answerSuggestion {
+  min-height: 72px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--card-radius);
+  background: var(--color-background-surface);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+}
+
+.answerSuggestion:hover {
+  border-color: var(--color-accent-gold);
+}
+
+.answerSuggestionSelected {
+  border-color: var(--color-accent-gold);
+  background: var(--color-accent-gold-soft);
+  box-shadow: 0 0 0 2px rgba(184, 138, 48, 0.22);
+}
+
+.answerSuggestion:disabled:not(.answerSuggestionSelected) {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.answerSuggestionLogo {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  padding: 5px;
+  background: var(--color-background-page);
+}
+
+.answerSuggestionLogo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.selectedAnswerList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.selectedAnswerChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: var(--border-width) solid var(--color-accent-gold);
+  border-radius: var(--control-radius);
+  background: var(--color-accent-gold-soft);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-top: var(--space-8);
+}
+
+.actions .primaryButton {
+  width: 100%;
+}
+
+.questionActions {
+  margin-top: clamp(2.75rem, 5vw, 4rem);
+}
+
+.resultIcon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto var(--space-6);
+  border-radius: var(--control-radius);
+  background: var(--color-accent-gold);
+  box-shadow: 0 10px 28px rgba(184, 138, 48, 0.26);
+}
+
+.resultIcon span {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: inherit;
+  background: var(--color-background-surface);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-accent-gold);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.summary {
+  margin: var(--space-8) auto;
+  border-block: var(--border-width) solid var(--color-border-default);
+  padding: var(--space-2) var(--space-6);
+  text-align: left;
+}
+
+.summaryRow {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.75fr) 1.25fr;
+  gap: var(--space-5);
+  padding: var(--space-4) 0;
+}
+
+.summaryRow + .summaryRow {
+  border-top: var(--border-width) solid var(--color-border-default);
+}
+
+.summaryRow dt {
+  color: var(--color-accent-gold);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+}
+
+.summaryRow dd {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.primaryLink {
+  width: min(100%, 390px);
+}
+
+.preBookingTextarea {
+  min-height: 150px;
+  margin-top: var(--space-8);
+  padding: var(--space-5);
+  resize: vertical;
+}
+
+.processingCard {
+  max-width: 620px;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-6);
+  padding-block: clamp(var(--space-12), 10vw, 6rem);
+  text-align: center;
+}
+
+.processingSpinner {
+  width: 64px;
+  height: 64px;
+  border: 5px solid rgba(184, 138, 48, 0.24);
+  border-top-color: var(--color-accent-gold);
+  border-right-color: var(--color-text-primary);
+  border-radius: var(--control-radius);
+  animation: processing-spin 850ms linear infinite;
+}
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lever-card-in {
+  from { opacity: 0; transform: rotateY(86deg) translateY(8px); }
+  to { opacity: 1; transform: rotateY(0) translateY(0); }
+}
+
+@keyframes processing-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 720px) {
+  .stage {
+    align-items: start;
+    padding: var(--space-5) var(--space-3) var(--space-8);
+  }
+
+  .card {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .introCard,
+  .resultCard {
+    padding-block: var(--space-8);
+  }
+
+  .introBrandSignature {
+    align-self: center;
+    margin-top: auto;
+  }
+
+  .questionHeading {
+    margin-bottom: var(--space-6);
+  }
+
+  .supporting,
+  .optionLabel {
+    font-size: var(--font-size-sm);
+  }
+
+  .optionBody {
+    min-height: 84px;
+    padding: var(--space-4);
+  }
+
+  .actions {
+    margin-top: var(--space-6);
+  }
+
+  .summary {
+    padding-inline: 0;
+  }
+
+  .summaryRow,
+  .schoolComparisonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .answerSuggestionGrid,
+  .textAnswerRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .applicationLeverCard {
+    animation: none;
+  }
+
+  .processingSpinner {
+    animation-duration: 1.8s;
+  }
+
+  .optionBody,
+  .optionIndicator span {
+    transition: none;
+  }
+}

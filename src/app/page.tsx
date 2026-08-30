@@ -1,8 +1,10 @@
 import Image from "next/image";
 import { BookingLink } from "@/components/booking-link";
 import { BrandMark } from "@/components/brand-mark";
+import { CalendlyEmbed } from "@/components/calendly-embed";
 import { SiteHeader } from "@/components/site-header";
 import { Testimonial } from "@/components/testimonial";
+import { ButtonLink } from "@/components/ui/primitives";
 
 const team = [
   {
@@ -126,6 +128,17 @@ const testimonials = [
   },
 ];
 
+const heroSchools = [
+  { src: "/logos/harvard_mark.png", alt: "Harvard University", width: 212, height: 250 },
+  { src: "/logos/penn_shield.png", alt: "University of Pennsylvania", width: 250, height: 216 },
+  { src: "/logos/stanford_cropped.png", alt: "Stanford University", width: 340, height: 340 },
+  { src: "/logos/brown_shield.png", alt: "Brown University", width: 200, height: 256 },
+  { src: "/logos/nyu_torch.png", alt: "New York University", width: 300, height: 300 },
+] as const;
+
+const calendlyUrl =
+  "https://calendly.com/jeffrey-pegasusprep/discovery?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=344054&primary_color=b88a30";
+
 export default function Home() {
   return (
     <>
@@ -133,34 +146,76 @@ export default function Home() {
       <SiteHeader />
 
       <main>
-        <section className="hero-slim" aria-labelledby="hero-title">
-          <div className="hero-tag">
-            <span className="hero-tag-dot" />
-            By Invitation &amp; Referral Only
-          </div>
-          <h1 className="hero-slim-title" id="hero-title">
-            A Private Education Office <br /> for High Net Worth Families
-          </h1>
-          <p className="hero-slim-sub">
-            We manage every aspect of the college application process—from strategy through
-            enrollment.
-          </p>
-          <div className="hero-ctas">
-            <BookingLink className="btn btn-lg">Schedule a Private Meeting</BookingLink>
-            <a href="#testimonials" className="btn btn-lg btn-soft">
-              See Results
-            </a>
+        <section className="hero-showcase" aria-labelledby="hero-title">
+          <Image
+            alt=""
+            className="hero-backdrop"
+            fill
+            priority
+            sizes="100vw"
+            src="/pegasus-campus-hero.png"
+          />
+          <div className="hero-overlay" aria-hidden="true" />
+
+          <div className="hero-content">
+            <p className="hero-kicker">By invitation &amp; referral only.</p>
+            <h1 className="hero-title ds-display ds-display--xl" id="hero-title">
+              We build the application they remember.
+            </h1>
+            <p className="hero-copy ds-body ds-body--lead">
+              One private team manages the strategy, story, execution, and pressure behind a
+              high-stakes college admissions process.
+            </p>
+            <div className="hero-actions">
+              <BookingLink size="large">Schedule a Private Meeting</BookingLink>
+              <ButtonLink href="#testimonials" appearance="outline-inverse" size="large">
+                See Our Results
+              </ButtonLink>
+            </div>
+
+            <div className="hero-proof" aria-label="Schools represented in Pegasus student outcomes">
+              <span className="hero-proof-label">Student outcomes include</span>
+              <div className="hero-school-logos">
+                {heroSchools.map((school) => (
+                  <span className="hero-school-logo ds-logo-frame" key={school.alt}>
+                    <span className="ds-logo-frame__media">
+                      <Image
+                        alt={school.alt}
+                        height={school.height}
+                        src={school.src}
+                        width={school.width}
+                      />
+                    </span>
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="videos-lead" aria-label="Student video testimonials">
-          <div className="videos-grid">
+        <section className="testimonial-bento-section" aria-labelledby="student-stories-title">
+          <div className="testimonial-bento-header">
+            <div>
+              <p className="section-label">Student outcomes</p>
+              <h2 className="carousel-heading ds-display ds-display--lg" id="student-stories-title">
+                The people behind the results.
+              </h2>
+            </div>
+            <p className="bento-summary ds-body">
+              Students, in their own words.
+              <br />
+              One standard of care.
+            </p>
+          </div>
+
+          <div className="videos-grid bento-videos" aria-label="Student video testimonials">
             <article className="video-outer">
               <div className="video-embed">
                 <iframe
                   src="https://www.loom.com/embed/30947e99fe3b427982f3d5b5056243bb?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
                   title="Parsons School of Design student testimonial"
                   allowFullScreen
+                  suppressHydrationWarning
                 />
               </div>
               <div className="video-meta">
@@ -175,6 +230,7 @@ export default function Home() {
                   src="https://www.loom.com/embed/922f80bbb07b4a88b302a7419ec6fd4f?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
                   title="University of Pennsylvania student testimonial"
                   allowFullScreen
+                  suppressHydrationWarning
                 />
               </div>
               <div className="video-meta">
@@ -182,6 +238,12 @@ export default function Home() {
                 <span className="video-school-pill">University of Pennsylvania</span>
               </div>
             </article>
+          </div>
+
+          <div className="t-editorial">
+            {testimonials.map((testimonial) => (
+              <Testimonial key={testimonial.attribution} {...testimonial} />
+            ))}
           </div>
         </section>
 
@@ -191,19 +253,19 @@ export default function Home() {
           <div className="testimonials">
             <header className="t-header">
               <p className="section-label">Our Approach</p>
-              <h2 className="section-heading">
+              <h2 className="section-heading ds-display ds-display--lg">
                 A private team,
                 <br />
                 around your child.
               </h2>
-              <p className="team-oneline">
+              <p className="team-oneline ds-body ds-body--lead">
                 Carefully assembled for your child, and accountable for the outcome.
               </p>
 
               <div className="team-grid">
                 {team.map((member) => (
                   <article className="team-card" key={member.role}>
-                    <h3 className="team-card-role">{member.role}</h3>
+                    <h3 className="team-card-role ds-heading ds-heading--sm">{member.role}</h3>
                     <p className="team-card-cred">{member.credential}</p>
                     <p className="team-card-desc">{member.description}</p>
                   </article>
@@ -225,15 +287,10 @@ export default function Home() {
               </div>
             </article>
 
-            <div className="t-editorial">
-              {testimonials.map((testimonial) => (
-                <Testimonial key={testimonial.attribution} {...testimonial} />
-              ))}
-            </div>
           </div>
         </section>
 
-        <section className="about-section" aria-labelledby="about-name">
+        <section className="about-section" id="about" aria-labelledby="about-name">
           <div className="about-photo-wrap">
             <Image
               src="/jeffrey.png"
@@ -245,7 +302,7 @@ export default function Home() {
             />
           </div>
           <div className="about-content">
-            <h2 className="about-name" id="about-name">
+            <h2 className="about-name ds-heading ds-heading--md" id="about-name">
               Jeffrey Zhang
             </h2>
             <p className="about-title">Founder, Pegasus Education</p>
@@ -276,28 +333,76 @@ export default function Home() {
         </section>
 
         <section className="cta-section" aria-label="Schedule a private meeting">
-          <BookingLink className="btn btn-lg">Schedule a Private Meeting</BookingLink>
-          <div className="cta-contacts">
-            <a href="mailto:admissions@pegasusprep.education" className="cta-contact-item">
-              admissions@pegasusprep.education
-            </a>
-            <div className="cta-divider" />
-            <a href="tel:+19178552330" className="cta-contact-item">
-              917-855-2330
-            </a>
+          <div className="cta-panel">
+            <p className="cta-eyebrow">Private admissions strategy</p>
+            <h2 className="cta-title ds-display ds-display--lg">
+              The right application starts with a <em className="ds-emphasis">private conversation.</em>
+            </h2>
+            <p className="cta-copy ds-body">
+              Tell us where your child is today and where your family wants them to go. We&apos;ll
+              determine whether Pegasus is the right team to help them get there.
+            </p>
+            <div className="cta-calendly-frame-wrap">
+              <CalendlyEmbed url={calendlyUrl} />
+            </div>
+            <div className="cta-contacts">
+              <a href="mailto:admissions@pegasusprep.education" className="cta-contact-item">
+                admissions@pegasusprep.education
+              </a>
+              <div className="cta-divider" />
+              <a href="tel:+19178552330" className="cta-contact-item">
+                917-855-2330
+              </a>
+            </div>
           </div>
         </section>
       </main>
 
-      <footer>
-        <div className="footer-left">
-          <BrandMark className="footer-mark" />
-          <span className="footer-name">Pegasus Education</span>
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-main">
+            <div className="footer-brand-block">
+              <a className="footer-brand" href="#top" aria-label="Pegasus Education home">
+                <BrandMark className="footer-mark" />
+                <span className="footer-name">Pegasus Education</span>
+              </a>
+              <p className="footer-positioning">
+                A private education office for families who expect every detail of the admissions
+                process to be handled with care.
+              </p>
+              <span className="footer-invitation">By invitation &amp; referral only</span>
+            </div>
+
+            <nav className="footer-column" aria-label="Footer navigation">
+              <p className="footer-heading">Explore</p>
+              <a href="#top">Home</a>
+              <a href="#testimonials">Approach &amp; results</a>
+              <a href="#about">Meet the founder</a>
+              <a href="/apply">Private admissions assessment</a>
+            </nav>
+
+            <div className="footer-column">
+              <p className="footer-heading">Private admissions</p>
+              <a href="mailto:admissions@pegasusprep.education">
+                admissions@pegasusprep.education
+              </a>
+              <a href="tel:+19178552330">917-855-2330</a>
+              <a href="https://www.linkedin.com/in/bobajef/" target="_blank" rel="noopener noreferrer">
+                LinkedIn <span aria-hidden="true">↗</span>
+              </a>
+              <BookingLink appearance="text" className="footer-meeting-link">Schedule a private meeting</BookingLink>
+            </div>
+          </div>
+
+          <div className="footer-bottom">
+            <span>© 2026 Pegasus Education. All rights reserved.</span>
+            <span>Private college admissions strategy and execution.</span>
+          </div>
         </div>
       </footer>
 
       <div className="cta-sticky">
-        <BookingLink className="btn">Schedule a Private Meeting</BookingLink>
+        <BookingLink>Schedule a Private Meeting</BookingLink>
       </div>
     </>
   );

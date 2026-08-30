@@ -2,36 +2,96 @@
   color-scheme: light;
 
   /* Color foundations */
-  --color-background-page: #fafaf7;
+  --color-background-page: #faf9f5;
   --color-background-surface: #ffffff;
-  --color-background-subtle: #fafafa;
-  --color-background-deep: #0b1b2e;
-  --color-background-deep-raised: #16283f;
+  --color-background-subtle: #f4f0e7;
+  --color-background-deep: #141c26;
+  --color-background-deep-raised: #15283f;
 
-  --color-text-primary: #0d1f35;
-  --color-text-secondary: #47556e;
-  --color-text-muted: #7c8799;
+  --color-text-primary: #141c26;
+  --color-text-secondary: #15283f;
+  --color-text-muted: #66717d;
   --color-text-inverse: #ffffff;
-  --color-text-inverse-muted: rgba(255, 255, 255, 0.65);
+  --color-text-inverse-strong: rgba(255, 255, 255, 0.9);
+  --color-text-inverse-body: rgba(255, 255, 255, 0.82);
+  --color-text-inverse-muted: rgba(255, 255, 255, 0.7);
+  --color-text-inverse-faint: rgba(255, 255, 255, 0.48);
 
-  --color-accent-blue: #8ab4e3;
-  --color-accent-pink: #f0aadb;
-  --gradient-accent: linear-gradient(135deg, var(--color-accent-blue), var(--color-accent-pink));
-  --gradient-deep: linear-gradient(165deg, var(--color-background-deep-raised), var(--color-background-deep));
+  --color-accent-gold: #b88a30;
+  --color-accent-gold-hover: #ceb344;
+  --color-accent-gold-soft: #f3ead8;
+  --color-accent-gold-border: rgba(184, 138, 48, 0.42);
+  --color-accent-gold-border-strong: rgba(184, 138, 48, 0.7);
+  --color-accent-gold-glow: rgba(184, 138, 48, 0.18);
+  --color-accent-gold-shadow: rgba(184, 138, 48, 0.26);
+  --color-accent-gold-watermark: rgba(184, 138, 48, 0.28);
+  --color-focus-ring: rgba(184, 138, 48, 0.72);
+  --color-accent-blue: var(--color-accent-gold);
+  --color-accent-pink: var(--color-accent-gold-hover);
+  --gradient-accent: linear-gradient(135deg, var(--color-accent-gold-hover), var(--color-accent-gold));
+  --gradient-deep: linear-gradient(180deg, var(--color-background-deep) 0%, var(--color-background-deep-raised) 100%);
+  --gradient-hero-overlay: linear-gradient(
+      90deg,
+      rgba(6, 12, 19, 0.9) 0%,
+      rgba(7, 14, 23, 0.78) 44%,
+      rgba(7, 14, 23, 0.22) 76%
+    ),
+    linear-gradient(180deg, rgba(5, 10, 16, 0.08) 42%, rgba(5, 10, 16, 0.8) 100%);
+  --gradient-hero-overlay-mobile: linear-gradient(
+      90deg,
+      rgba(6, 12, 19, 0.9) 0%,
+      rgba(7, 14, 23, 0.72) 72%,
+      rgba(7, 14, 23, 0.44) 100%
+    ),
+    linear-gradient(180deg, rgba(5, 10, 16, 0.08) 42%, rgba(5, 10, 16, 0.82) 100%);
+  --gradient-callout: radial-gradient(
+      circle at 50% 0%,
+      var(--color-accent-gold-glow),
+      transparent 42%
+    ),
+    var(--gradient-deep);
+  --gradient-navigation: linear-gradient(
+    180deg,
+    rgba(8, 15, 23, 0.72),
+    rgba(8, 15, 23, 0.28)
+  );
 
-  --color-border-default: #e6e8ec;
-  --color-border-strong: #d0d0d0;
-  --color-border-inverse: rgba(255, 255, 255, 0.1);
+  --color-border-default: #dedbd2;
+  --color-border-strong: #c9c3b7;
+  --color-border-inverse: rgba(255, 255, 255, 0.14);
+  --color-border-inverse-strong: rgba(255, 255, 255, 0.35);
+  --color-border-inverse-emphasis: rgba(255, 255, 255, 0.72);
+  --color-surface-inverse-subtle: rgba(255, 255, 255, 0.1);
+  --color-surface-page-translucent: rgba(250, 249, 245, 0.96);
+  --color-surface-deep-translucent: rgba(20, 28, 38, 0.97);
+
+  /* Reporting semantics */
+  --color-reporting-surface: #f1f1ef;
+  --color-reporting-series-primary: #f15b2a;
+  --color-reporting-series-secondary: #d84239;
+  --color-status-warning-border: #e5c87b;
+  --color-status-warning-surface: #fff9e9;
+  --color-status-error-border: #ebb4ae;
+  --color-status-error-surface: #fff2f0;
 
   /* Typography */
-  --font-family-sans: var(--font-inter), Arial, sans-serif;
-  --font-family-serif: var(--font-playfair), Georgia, serif;
+  --font-family-sans: var(--font-inter-tight), "Inter Tight", Arial, sans-serif;
+  --font-family-serif: var(--font-inter-tight), "Inter Tight", Arial, sans-serif;
+  --font-family-emphasis: var(--font-emphasis-display), Georgia, "Times New Roman", serif;
+  --font-inter: var(--font-inter-tight);
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
+  --font-size-body: 1.125rem;
+  --font-size-body-lg: clamp(1.125rem, 1.45vw, 1.3125rem);
+  --font-size-heading-sm: 1.375rem;
+  --font-size-heading-md: clamp(2rem, 3vw, 2.5rem);
+  --font-size-display-md: clamp(2rem, 4.5vw, 3rem);
+  --font-size-display-lg: clamp(2.375rem, 5vw, 3.75rem);
+  --font-size-display-xl: clamp(3.125rem, 5.2vw, 4.5rem);
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -39,6 +99,10 @@
   --font-weight-heavy: 800;
   --tracking-tight: -0.025em;
   --tracking-label: 0.14em;
+  --tracking-display: -0.04em;
+  --line-height-body: 1.55;
+  --line-height-heading: 1.12;
+  --line-height-display: 1.05;
 
   /* Spacing */
   --space-1: 0.25rem;
@@ -68,12 +132,33 @@
   --radius-3xl: 22px;
   --radius-full: 999px;
   --border-width: 1px;
+  --card-radius: var(--radius-xl);
+  --control-radius: var(--radius-full);
 
   /* Elevation */
-  --shadow-soft: 0 14px 40px rgba(13, 31, 53, 0.05);
-  --shadow-card: 0 2px 4px rgba(13, 31, 53, 0.03), 0 14px 40px rgba(13, 31, 53, 0.05);
-  --shadow-floating: 0 14px 36px rgba(13, 31, 53, 0.3);
-  --shadow-deep: 0 28px 70px rgba(13, 31, 53, 0.28);
+  --shadow-soft: 0 14px 40px rgba(20, 28, 38, 0.06);
+  --shadow-card: 0 2px 4px rgba(20, 28, 38, 0.03), 0 14px 40px rgba(20, 28, 38, 0.06);
+  --shadow-floating: 0 14px 36px rgba(20, 28, 38, 0.24);
+  --shadow-deep: 0 28px 70px rgba(20, 28, 38, 0.3);
+  --shadow-panel: 0 22px 64px rgba(20, 28, 38, 0.1);
+  --shadow-card-hover: 0 24px 52px rgba(20, 28, 38, 0.11);
+  --shadow-media: 0 24px 60px rgba(6, 15, 25, 0.32);
+
+  /* Controls */
+  --button-height: 52px;
+  --button-height-large: 64px;
+  --button-height-compact: 44px;
+  --button-padding-inline: 28px;
+  --button-padding-inline-large: 40px;
+  --button-font-size: 1rem;
+  --button-font-size-large: 1.1875rem;
+  --button-font-weight: 600;
+  --button-background: var(--color-accent-gold);
+  --button-background-hover: var(--color-accent-gold-hover);
+  --button-color: var(--color-text-inverse);
+  --button-shadow: 0 14px 36px rgba(20, 28, 38, 0.24);
+  --button-text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  --focus-outline: 3px solid var(--color-focus-ring);
 
   /* Layout */
   --container-reading: 40rem;
