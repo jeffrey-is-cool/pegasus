@@ -152,6 +152,7 @@ type Answers = Record<string, string>;
 type ScreenExitReason = "back" | "completed" | "page_exit" | "screen_changed";
 const IS_DEVELOPMENT = process.env.NODE_ENV === "development";
 const MULTI_VALUE_SEPARATOR = "|";
+const CARD_CLASS_NAME = `${styles.card} ds-surface ds-surface--page ds-surface--accented ds-surface--elevated`;
 
 function selectedAnswerValues(value: string | undefined) {
   return value?.split(MULTI_VALUE_SEPARATOR).filter(Boolean) ?? [];
@@ -495,7 +496,8 @@ export function ApplyFunnel() {
     <nav className={styles.devNavigator} aria-label="Development step navigation">
       <span className={styles.devLabel}>Dev</span>
       {QUESTIONS.map((item, index) => (
-        <button
+        <Button
+          appearance="unstyled"
           aria-current={phase === "questions" && !showSchoolComparison && step === index ? "step" : undefined}
           className={`${styles.devStep} ${phase === "questions" && !showSchoolComparison && step === index ? styles.devStepActive : ""}`}
           key={item.key}
@@ -504,7 +506,7 @@ export function ApplyFunnel() {
           type="button"
         >
           {index + 1}
-        </button>
+        </Button>
       ))}
     </nav>
   ) : null;
@@ -514,7 +516,7 @@ export function ApplyFunnel() {
       <div className={styles.stage}>
         {devNavigator}
         {phase === "intro" && (
-          <section className={`${styles.card} ${styles.introCard}`} aria-labelledby="apply-intro-title">
+          <section className={`${CARD_CLASS_NAME} ${styles.introCard}`} aria-labelledby="apply-intro-title">
             <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-intro-title">
               Find the right path to your child&apos;s{" "}
               <em className={`${styles.emphasis} ds-emphasis`}>best-fit college.</em>
@@ -542,7 +544,7 @@ export function ApplyFunnel() {
 
         {phase === "questions" && showSchoolComparison && (
           <section
-            className={`${styles.card} ${styles.schoolComparisonCard} ${showApplicationLevers ? styles.applicationLeversCard : ""}`}
+            className={`${CARD_CLASS_NAME} ${styles.schoolComparisonCard} ${showApplicationLevers ? styles.applicationLeversCard : ""}`}
             aria-labelledby="school-comparison-title"
           >
             <h1
@@ -607,7 +609,7 @@ export function ApplyFunnel() {
 
         {phase === "questions" && question && !showSchoolComparison && (
           <form
-            className={styles.card}
+            className={CARD_CLASS_NAME}
             key={question.key}
             onSubmit={(event) => {
               event.preventDefault();
@@ -675,7 +677,8 @@ export function ApplyFunnel() {
                   {customSelectedValues.length > 0 && (
                     <div className={styles.selectedAnswerList} aria-label="Selected dream schools">
                       {customSelectedValues.map((answer) => (
-                        <button
+                        <Button
+                          appearance="unstyled"
                           className={styles.selectedAnswerChip}
                           key={answer}
                           onClick={() => chooseSuggestedAnswer(answer)}
@@ -683,7 +686,7 @@ export function ApplyFunnel() {
                         >
                           {answer}
                           <span aria-hidden="true">×</span>
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   )}
@@ -698,7 +701,8 @@ export function ApplyFunnel() {
                           );
 
                           return (
-                            <button
+                            <Button
+                              appearance="unstyled"
                               aria-pressed={isSelected}
                               className={`${styles.answerSuggestion} ${isSelected ? styles.answerSuggestionSelected : ""}`}
                               disabled={!isSelected && isSelectionLimitReached}
@@ -715,7 +719,7 @@ export function ApplyFunnel() {
                                 />
                               </span>
                               <span>{answer.label}</span>
-                            </button>
+                            </Button>
                           );
                         })}
                       </div>
@@ -771,11 +775,13 @@ export function ApplyFunnel() {
         )}
 
         {phase === "complete" && (
-          <section className={`${styles.card} ${styles.resultCard}`} aria-labelledby="apply-result-title">
+          <section className={`${CARD_CLASS_NAME} ${styles.resultCard}`} aria-labelledby="apply-result-title">
             <div className={styles.resultIcon} aria-hidden="true">
               <span>✓</span>
             </div>
-            <p className={styles.eyebrow}>You qualify</p>
+            <p className={`${styles.eyebrow} ds-eyebrow ds-eyebrow--accent ds-eyebrow--compact`}>
+              You qualify
+            </p>
             <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-result-title" ref={headingRef} tabIndex={-1}>
               You&apos;re qualified to schedule a private call.
             </h1>
@@ -800,7 +806,7 @@ export function ApplyFunnel() {
         {phase === "prebooking" && (
           <form
             aria-labelledby="apply-prebooking-title"
-            className={`${styles.card} ${styles.resultCard}`}
+            className={`${CARD_CLASS_NAME} ${styles.resultCard}`}
             onSubmit={(event) => {
               event.preventDefault();
               continueToBooking();
@@ -829,8 +835,10 @@ export function ApplyFunnel() {
         )}
 
         {phase === "booking" && (
-          <section className={`${styles.card} ${styles.resultCard}`} aria-labelledby="apply-booking-title">
-            <p className={styles.eyebrow}>Final step</p>
+          <section className={`${CARD_CLASS_NAME} ${styles.resultCard}`} aria-labelledby="apply-booking-title">
+            <p className={`${styles.eyebrow} ds-eyebrow ds-eyebrow--accent ds-eyebrow--compact`}>
+              Final step
+            </p>
             <h1 className={`${styles.displayTitle} ds-display ds-display--md`} id="apply-booking-title" ref={headingRef} tabIndex={-1}>
               Book your private call.
             </h1>
@@ -853,7 +861,7 @@ export function ApplyFunnel() {
           <section
             aria-labelledby="apply-processing-title"
             aria-live="polite"
-            className={`${styles.card} ${styles.processingCard}`}
+            className={`${CARD_CLASS_NAME} ${styles.processingCard}`}
           >
             <span className={styles.processingSpinner} aria-hidden="true" />
             <h1 className="ds-display ds-display--md" id="apply-processing-title" ref={headingRef} tabIndex={-1}>

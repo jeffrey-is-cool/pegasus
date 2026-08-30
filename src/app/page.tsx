@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { BookingLink } from "@/components/booking-link";
-import { BrandMark } from "@/components/brand-mark";
-import { CalendlyEmbed } from "@/components/calendly-embed";
+import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { Testimonial } from "@/components/testimonial";
 import { ButtonLink } from "@/components/ui/primitives";
+import { VideoTestimonial } from "@/components/video-testimonial";
 
 const team = [
   {
@@ -137,7 +137,7 @@ const heroSchools = [
 ] as const;
 
 const calendlyUrl =
-  "https://calendly.com/jeffrey-pegasusprep/discovery?hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=344054&primary_color=b88a30";
+  "https://calendly.com/jeffrey-pegasusprep/discovery?embed_type=Inline&hide_gdpr_banner=1&hide_event_type_details=1&background_color=ffffff&text_color=344054&primary_color=b88a30";
 
 export default function Home() {
   return (
@@ -174,7 +174,9 @@ export default function Home() {
             </div>
 
             <div className="hero-proof" aria-label="Schools represented in Pegasus student outcomes">
-              <span className="hero-proof-label">Student outcomes include</span>
+              <span className="hero-proof-label ds-eyebrow ds-eyebrow--muted-inverse ds-eyebrow--compact">
+                Student outcomes include
+              </span>
               <div className="hero-school-logos">
                 {heroSchools.map((school) => (
                   <span className="hero-school-logo ds-logo-frame" key={school.alt}>
@@ -196,7 +198,7 @@ export default function Home() {
         <section className="testimonial-bento-section" aria-labelledby="student-stories-title">
           <div className="testimonial-bento-header">
             <div>
-              <p className="section-label">Student outcomes</p>
+              <p className="section-label ds-eyebrow ds-eyebrow--accent">Student outcomes</p>
               <h2 className="carousel-heading ds-display ds-display--lg" id="student-stories-title">
                 The people behind the results.
               </h2>
@@ -209,35 +211,14 @@ export default function Home() {
           </div>
 
           <div className="videos-grid bento-videos" aria-label="Student video testimonials">
-            <article className="video-outer">
-              <div className="video-embed">
-                <iframe
-                  src="https://www.loom.com/embed/30947e99fe3b427982f3d5b5056243bb?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
-                  title="Parsons School of Design student testimonial"
-                  allowFullScreen
-                  suppressHydrationWarning
-                />
-              </div>
-              <div className="video-meta">
-                <span className="video-label">Student Testimonial</span>
-                <span className="video-school-pill">Parsons School of Design</span>
-              </div>
-            </article>
-
-            <article className="video-outer">
-              <div className="video-embed">
-                <iframe
-                  src="https://www.loom.com/embed/922f80bbb07b4a88b302a7419ec6fd4f?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
-                  title="University of Pennsylvania student testimonial"
-                  allowFullScreen
-                  suppressHydrationWarning
-                />
-              </div>
-              <div className="video-meta">
-                <span className="video-label">Student Testimonial</span>
-                <span className="video-school-pill">University of Pennsylvania</span>
-              </div>
-            </article>
+            <VideoTestimonial
+              embedUrl="https://www.loom.com/embed/30947e99fe3b427982f3d5b5056243bb?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
+              school="Parsons School of Design"
+            />
+            <VideoTestimonial
+              embedUrl="https://www.loom.com/embed/922f80bbb07b4a88b302a7419ec6fd4f?hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&hide_speed=true"
+              school="University of Pennsylvania"
+            />
           </div>
 
           <div className="t-editorial">
@@ -252,7 +233,7 @@ export default function Home() {
         <section className="testimonials-wrap" id="testimonials">
           <div className="testimonials">
             <header className="t-header">
-              <p className="section-label">Our Approach</p>
+              <p className="section-label ds-eyebrow ds-eyebrow--accent">Our Approach</p>
               <h2 className="section-heading ds-display ds-display--lg">
                 A private team,
                 <br />
@@ -264,25 +245,31 @@ export default function Home() {
 
               <div className="team-grid">
                 {team.map((member) => (
-                  <article className="team-card" key={member.role}>
+                  <article className="team-card ds-surface" key={member.role}>
                     <h3 className="team-card-role ds-heading ds-heading--sm">{member.role}</h3>
-                    <p className="team-card-cred">{member.credential}</p>
+                    <p className="team-card-cred ds-eyebrow ds-eyebrow--accent ds-eyebrow--compact">
+                      {member.credential}
+                    </p>
                     <p className="team-card-desc">{member.description}</p>
                   </article>
                 ))}
               </div>
 
-              <p className="team-price">Most families invest approximately US$150,000.</p>
+              <p className="team-price ds-eyebrow">
+                Most families invest approximately US$150,000.
+              </p>
             </header>
 
-            <article className="featured">
+            <article className="featured ds-surface ds-surface--deep ds-surface--accented">
               <blockquote>
                 “I didn’t think she had a shot at an Ivy. They work weekends, holidays, even
                 Thanksgiving. They didn’t just help with college admissions — they helped my
                 daughter believe in herself. And that is priceless.”
               </blockquote>
               <div className="featured-bottom">
-                <div className="featured-attr">Parent — Daughter Admitted</div>
+                <div className="featured-attr ds-eyebrow ds-eyebrow--inverse ds-eyebrow--compact">
+                  Parent — Daughter Admitted
+                </div>
                 <div className="featured-school-badge">University of Pennsylvania</div>
               </div>
             </article>
@@ -333,8 +320,10 @@ export default function Home() {
         </section>
 
         <section className="cta-section" aria-label="Schedule a private meeting">
-          <div className="cta-panel">
-            <p className="cta-eyebrow">Private admissions strategy</p>
+          <div className="cta-panel ds-surface ds-surface--deep ds-surface--accented ds-surface--callout">
+            <p className="cta-eyebrow ds-eyebrow ds-eyebrow--inverse ds-eyebrow--compact">
+              Private admissions strategy
+            </p>
             <h2 className="cta-title ds-display ds-display--lg">
               The right application starts with a <em className="ds-emphasis">private conversation.</em>
             </h2>
@@ -343,7 +332,13 @@ export default function Home() {
               determine whether Pegasus is the right team to help them get there.
             </p>
             <div className="cta-calendly-frame-wrap">
-              <CalendlyEmbed url={calendlyUrl} />
+              <iframe
+                className="calendly-frame"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                src={calendlyUrl}
+                title="Schedule a private admissions meeting with Pegasus Education"
+              />
             </div>
             <div className="cta-contacts">
               <a href="mailto:admissions@pegasusprep.education" className="cta-contact-item">
@@ -358,52 +353,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="site-footer">
-        <div className="footer-inner">
-          <div className="footer-main">
-            <div className="footer-brand-block">
-              <a className="footer-brand" href="#top" aria-label="Pegasus Education home">
-                <BrandMark className="footer-mark" />
-                <span className="footer-name">Pegasus Education</span>
-              </a>
-              <p className="footer-positioning">
-                A private education office for families who expect every detail of the admissions
-                process to be handled with care.
-              </p>
-              <span className="footer-invitation">By invitation &amp; referral only</span>
-            </div>
-
-            <nav className="footer-column" aria-label="Footer navigation">
-              <p className="footer-heading">Explore</p>
-              <a href="#top">Home</a>
-              <a href="#testimonials">Approach &amp; results</a>
-              <a href="#about">Meet the founder</a>
-              <a href="/apply">Private admissions assessment</a>
-            </nav>
-
-            <div className="footer-column">
-              <p className="footer-heading">Private admissions</p>
-              <a href="mailto:admissions@pegasusprep.education">
-                admissions@pegasusprep.education
-              </a>
-              <a href="tel:+19178552330">917-855-2330</a>
-              <a href="https://www.linkedin.com/in/bobajef/" target="_blank" rel="noopener noreferrer">
-                LinkedIn <span aria-hidden="true">↗</span>
-              </a>
-              <BookingLink appearance="text" className="footer-meeting-link">Schedule a private meeting</BookingLink>
-            </div>
-          </div>
-
-          <div className="footer-bottom">
-            <span>© 2026 Pegasus Education. All rights reserved.</span>
-            <span>Private college admissions strategy and execution.</span>
-          </div>
-        </div>
-      </footer>
-
-      <div className="cta-sticky">
-        <BookingLink>Schedule a Private Meeting</BookingLink>
-      </div>
+      <SiteFooter />
     </>
   );
 }

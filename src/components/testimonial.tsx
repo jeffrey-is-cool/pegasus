@@ -26,7 +26,7 @@ export function Testimonial({
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <article className="t-item">
+    <article className="t-item ds-surface">
       <div className="t-card-header">
         <div className="t-logo">
           <Image src={logo} alt={logoAlt} width={logoWidth} height={logoHeight} />

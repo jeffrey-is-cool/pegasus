@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Button } from "@/components/ui/primitives";
 
 import {
   APPLY_FUNNEL_ANSWER_OPTIONS,
@@ -14,6 +15,9 @@ import type {
 } from "@/lib/analytics/apply-funnel-report";
 
 import styles from "../funnel-stats.module.css";
+
+const CARD_CLASS_NAME = `${styles.card} ds-surface ds-surface--flat`;
+const NOTICE_CLASS_NAME = `${styles.notice} ds-surface ds-surface--flat`;
 
 const WINDOWS: Array<{ value: ApplyFunnelWindow; label: string }> = [
   { value: "today", label: "Today" },
@@ -243,12 +247,12 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
   return (
     <main className={styles.workspace}>
       {visibleReport?.status === "not_configured" ? (
-        <section className={styles.notice} data-tone="warning">
+        <section className={NOTICE_CLASS_NAME} data-tone="warning">
           Add <code>POSTHOG_PERSONAL_API_KEY</code> to <code>.env.local</code> to load project 559881.
         </section>
       ) : null}
       {visibleReport?.status === "error" || error ? (
-        <section className={styles.notice} data-tone="error">
+        <section className={NOTICE_CLASS_NAME} data-tone="error">
           PostHog data could not be loaded. {error || "Check the server log."}
         </section>
       ) : null}
@@ -257,7 +261,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
         {!visibleReport && !error ? <p className={styles.loading}>Loading funnel stats…</p> : null}
         {visibleReport ? (
           <>
-            <section className={styles.card}>
+            <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h1>Summary</h1>
                 <span>
@@ -284,7 +288,8 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
                 </div>
                 <div className={styles.windowPicker} aria-label="Report timeframe">
                   {WINDOWS.map((option) => (
-                    <button
+                    <Button
+                      appearance="unstyled"
                       aria-pressed={window === option.value}
                       disabled={loading && window === option.value}
                       key={option.label}
@@ -292,13 +297,13 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
                       type="button"
                     >
                       {option.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
             </section>
 
-            <section className={styles.card}>
+            <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h2>Step drop-off</h2>
                 <span>PostHog people · screen completion and timing below</span>
@@ -306,7 +311,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
               <FunnelDropoffChart steps={steps} />
             </section>
 
-            <section className={styles.card}>
+            <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h2>Answer distribution</h2>
                 <span>Captured answers · people deduplicated per answer</span>
@@ -337,7 +342,7 @@ export function FunnelStatsWorkbench({ initialReport }: { initialReport: ApplyFu
               ) : <p className={styles.empty}>No answers were recorded in this timeframe.</p>}
             </section>
 
-            <section className={styles.card}>
+            <section className={CARD_CLASS_NAME}>
               <div className={styles.sectionHeading}>
                 <h2>Exact step data</h2>
                 <span>People, views, completion, timing, and page exits per screen</span>
