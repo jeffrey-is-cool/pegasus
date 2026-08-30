@@ -20,10 +20,6 @@
 .card {
   width: min(100%, 760px);
   padding: clamp(var(--space-8), 5vw, var(--space-12));
-  border: var(--border-width) solid var(--color-accent-gold-border);
-  border-radius: var(--card-radius);
-  background: var(--color-background-page);
-  box-shadow: var(--shadow-deep);
   animation: card-in var(--duration-slow) var(--ease-standard) both;
 }
 
@@ -227,7 +223,7 @@
   padding: var(--space-2) var(--space-3);
   border: var(--border-width) solid var(--color-border-default);
   border-radius: var(--card-radius);
-  background: rgba(250, 249, 245, 0.97);
+  background: var(--color-surface-page-translucent-strong);
   box-shadow: var(--shadow-floating);
   transform: translateX(-50%);
 }
@@ -339,7 +335,7 @@
 .optionSelected .optionBody {
   border-color: var(--color-accent-gold);
   background: var(--color-accent-gold-soft);
-  box-shadow: 0 0 0 2px rgba(184, 138, 48, 0.22);
+  box-shadow: var(--shadow-focus-accent-subtle);
 }
 
 .optionIndicator {
@@ -409,7 +405,7 @@
 
 .textAnswer:focus {
   border-color: var(--color-accent-gold);
-  box-shadow: 0 0 0 3px rgba(184, 138, 48, 0.26);
+  box-shadow: var(--shadow-focus-accent);
 }
 
 .addTextAnswerButton {
@@ -450,7 +446,7 @@
 .answerSuggestionSelected {
   border-color: var(--color-accent-gold);
   background: var(--color-accent-gold-soft);
-  box-shadow: 0 0 0 2px rgba(184, 138, 48, 0.22);
+  box-shadow: var(--shadow-focus-accent-subtle);
 }
 
 .answerSuggestion:disabled:not(.answerSuggestionSelected) {
@@ -522,7 +518,7 @@
   margin: 0 auto var(--space-6);
   border-radius: var(--control-radius);
   background: var(--color-accent-gold);
-  box-shadow: 0 10px 28px rgba(184, 138, 48, 0.26);
+  box-shadow: var(--shadow-accent);
 }
 
 .resultIcon span {
@@ -538,11 +534,6 @@
 
 .eyebrow {
   margin: 0 0 var(--space-3);
-  color: var(--color-accent-gold);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
 }
 
 .summary {
@@ -599,7 +590,7 @@
 .processingSpinner {
   width: 64px;
   height: 64px;
-  border: 5px solid rgba(184, 138, 48, 0.24);
+  border: var(--border-width-heavy) solid var(--color-accent-gold-border-soft);
   border-top-color: var(--color-accent-gold);
   border-right-color: var(--color-text-primary);
   border-radius: var(--control-radius);
