@@ -671,9 +671,9 @@ a {
 .calendly-frame {
   position: absolute;
   top: -64px;
-  left: 0;
+  left: -24px;
   display: block;
-  width: 100%;
+  width: calc(100% + 48px);
   height: calc(100% + 64px);
   border: 0;
   background: var(--color-background-surface);
@@ -1066,6 +1066,8 @@ a {
 
   .calendly-frame {
     top: -32px;
+    left: -16px;
+    width: calc(100% + 32px);
     height: calc(100% + 32px);
   }
 
