@@ -668,6 +668,19 @@ a {
   box-shadow: var(--shadow-deep);
 }
 
+.cta-calendly-frame-wrap::after {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  box-shadow:
+    inset 36px 0 0 var(--color-background-surface),
+    inset -36px 0 0 var(--color-background-surface),
+    inset 0 8px 0 var(--color-background-surface);
+  content: "";
+  pointer-events: none;
+}
+
 .calendly-frame {
   position: absolute;
   top: -64px;
@@ -1062,6 +1075,13 @@ a {
   .cta-calendly-frame-wrap {
     height: 700px;
     margin-top: 32px;
+  }
+
+  .cta-calendly-frame-wrap::after {
+    box-shadow:
+      inset 22px 0 0 var(--color-background-surface),
+      inset -22px 0 0 var(--color-background-surface),
+      inset 0 6px 0 var(--color-background-surface);
   }
 
   .calendly-frame {
