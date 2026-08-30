@@ -1,12 +1,12 @@
 .devShell {
   --dev-bg: var(--color-background-subtle);
   --dev-page: var(--color-background-surface);
-  --dev-subtle: #f1f1ef;
+  --dev-subtle: var(--color-reporting-surface);
   --dev-line: var(--color-border-default);
   --dev-text: var(--color-text-primary);
   --dev-muted: var(--color-text-muted);
-  --dev-orange: #f15b2a;
-  --dev-red: #d84239;
+  --dev-orange: var(--color-reporting-series-primary);
+  --dev-red: var(--color-reporting-series-secondary);
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
   min-height: 100vh;
@@ -124,9 +124,7 @@
 
 .card,
 .notice {
-  border: 1px solid var(--dev-line);
-  border-radius: var(--card-radius);
-  background: var(--dev-page);
+  border-color: var(--dev-line);
 }
 
 .card {
@@ -140,22 +138,22 @@
 }
 
 .notice[data-tone="warning"] {
-  border-color: #e5c87b;
-  background: #fff9e9;
+  border-color: var(--color-status-warning-border);
+  background: var(--color-status-warning-surface);
 }
 
 .notice[data-tone="error"] {
-  border-color: #ebb4ae;
-  background: #fff2f0;
+  border-color: var(--color-status-error-border);
+  background: var(--color-status-error-surface);
 }
 
 .notice code,
 .metricNote code,
 .answerCard code {
-  border-radius: 4px;
+  border-radius: var(--radius-code);
   padding: 1px 4px;
   background: var(--dev-subtle);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-family: var(--font-family-mono);
   font-size: 0.9em;
 }
 

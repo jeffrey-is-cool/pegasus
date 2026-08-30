@@ -67,7 +67,7 @@ export function Grid({ children, className, ...props }: PrimitiveProps) {
   );
 }
 
-type ButtonAppearance = "outline-inverse" | "primary" | "text";
+type ButtonAppearance = "outline-inverse" | "primary" | "text" | "unstyled";
 
 type ButtonClassOptions = {
   appearance?: ButtonAppearance;
@@ -83,9 +83,13 @@ export function buttonClasses({
   size = "default",
 }: ButtonClassOptions = {}) {
   return classes(
-    appearance === "text" ? "ds-text-button" : "ds-button",
+    appearance === "text"
+      ? "ds-text-button"
+      : appearance === "unstyled"
+        ? "ds-unstyled-button"
+        : "ds-button",
     appearance === "outline-inverse" && "ds-button--outline-inverse",
-    appearance !== "text" && size !== "default" && `ds-button--${size}`,
+    appearance !== "text" && appearance !== "unstyled" && size !== "default" && `ds-button--${size}`,
     className,
   );
 }

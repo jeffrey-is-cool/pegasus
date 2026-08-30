@@ -23,11 +23,35 @@
   box-shadow: none;
 }
 
+.ds-surface--page {
+  background: var(--color-background-page);
+}
+
 .ds-surface--deep {
   border-color: var(--color-border-inverse);
   background: var(--gradient-deep);
   color: var(--color-text-inverse);
   box-shadow: var(--shadow-deep);
+}
+
+.ds-surface--accented {
+  border-color: var(--color-accent-gold-border);
+}
+
+.ds-surface--media {
+  box-shadow: var(--shadow-media);
+}
+
+.ds-surface--elevated {
+  box-shadow: var(--shadow-deep);
+}
+
+.ds-surface--flat {
+  box-shadow: none;
+}
+
+.ds-surface--callout {
+  background: var(--gradient-callout);
 }
 
 .ds-stack {
@@ -107,6 +131,14 @@
   color: var(--color-accent-gold-hover);
 }
 
+.ds-eyebrow--muted-inverse {
+  color: var(--color-text-inverse-muted);
+}
+
+.ds-eyebrow--compact {
+  font-size: var(--font-size-xs);
+}
+
 .ds-link {
   color: inherit;
   font: inherit;
@@ -155,6 +187,7 @@
 
 .ds-button:focus-visible,
 .ds-text-button:focus-visible,
+.ds-unstyled-button:focus-visible,
 .ds-control:focus-visible {
   outline: var(--focus-outline);
   outline-offset: 3px;
@@ -203,6 +236,19 @@
   font: inherit;
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.ds-unstyled-button {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.ds-unstyled-button:disabled {
+  cursor: not-allowed;
 }
 
 .ds-control {
